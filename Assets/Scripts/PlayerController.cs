@@ -7,6 +7,9 @@ public class PlayerController : MonoBehaviour
     [Header("Component Refs")]
     [SerializeField] private InputHandler _inputHandler;
 
+    [Header("General Physics")] 
+    [SerializeField] private float _gravity;
+    
     [Header("Leg Spring")] 
     [SerializeField] private Transform _rideLineEnd;
     [SerializeField] private float _rideHeight;
@@ -17,6 +20,15 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private bool _canDoubleJump;
     [SerializeField] private float _jumpDelay;
     [SerializeField] private float _jumpPower;
+
+    [Header("Move")] 
+    [SerializeField] private float _maxMoveSpeed;
+    [SerializeField] private float _maxSprintSpeed;
+    [SerializeField] private float _acceleration;
+    [SerializeField] private AnimationCurve _accelerationFactor;
+    [SerializeField] private float _maxAcceleration;
+    [SerializeField] private AnimationCurve _maxAccelerationFactor;
+    [SerializeField] private float _maxInAirAcceleration;
     
     //Private Component Refs
     private Rigidbody _rgBody;
@@ -28,7 +40,14 @@ public class PlayerController : MonoBehaviour
     private bool _isSprinting;
     
     //Private Timers
-    private float jumpTimer;
+    private float _jumpTimer;
+    
+    //Input Variables
+    private Vector2 _movementInput;
+    
+    //Physics Variables
+    private float _bodyMass;
+    private Vector3 _targetVelocity;
     
     #region Unity Functions
     
@@ -36,6 +55,7 @@ public class PlayerController : MonoBehaviour
     {
         //Get Component Refs
         _rgBody = GetComponent<Rigidbody>();
+        _bodyMass = _rgBody.mass;
     }
 
     void Start()
@@ -49,21 +69,25 @@ public class PlayerController : MonoBehaviour
     
     void FixedUpdate()
     {
+        ApplyGravity();
+        
         if (_isJumping) return;
+        
         Hover();
+        HandleMove(_movementInput);
     }
 
     private void Update()
     {
         if (!_canJump)
         {
-            jumpTimer += Time.deltaTime;
+            _jumpTimer += Time.deltaTime;
 
-            if (jumpTimer >= _jumpDelay)
+            if (_jumpTimer >= _jumpDelay)
             {
                 _canJump = true;
                 _isJumping = false;
-                jumpTimer = 0;
+                _jumpTimer = 0;
             }
         }
     }
@@ -72,6 +96,11 @@ public class PlayerController : MonoBehaviour
     
     #region Private Functions
 
+    private void ApplyGravity()
+    {
+        _rgBody.AddForce(Vector3.down * _gravity * _bodyMass);
+    }
+    
     private void Hover()
     {
         //Get the offset
@@ -83,7 +112,7 @@ public class PlayerController : MonoBehaviour
             float rayDirectionVelocity = Vector3.Dot(rayDirection, velocity);
             float x = hit.distance - _rideHeight;
 
-            float springForce = ((x * _springPower)) - (rayDirectionVelocity * _dampPower);
+            float springForce = ((x * _springPower) - (rayDirectionVelocity * _dampPower)) * _bodyMass;
             
             _rgBody.AddForce(rayDirection * springForce);
 
@@ -97,10 +126,39 @@ public class PlayerController : MonoBehaviour
         _rideLineEnd.localPosition = new Vector3(0, -_rideHeight, 0);
     }
 
+    private void HandleMove(Vector2 movementInput)
+    {
+        Vector3 targetDirection = new Vector3(movementInput.x, 0, movementInput.y);
+        targetDirection = transform.TransformDirection(targetDirection);
+        
+        Vector3 unitVelocity = _targetVelocity.normalized;
+
+        float velocityDot = Vector3.Dot(targetDirection, unitVelocity);
+        float currentAcceleration = _acceleration * _accelerationFactor.Evaluate(velocityDot);
+
+        Vector3 maxTargetVelocity = targetDirection * (_isSprinting ? _maxSprintSpeed : _maxMoveSpeed);
+
+        _targetVelocity = Vector3.MoveTowards(_targetVelocity, maxTargetVelocity, currentAcceleration * Time.fixedDeltaTime);
+
+        Vector3 neededAcceleration = (_targetVelocity - _rgBody.velocity) / Time.fixedDeltaTime;
+        float maxAcceleration = _maxAcceleration * _maxAccelerationFactor.Evaluate(velocityDot);
+
+        if (!_isGrounded)
+        {
+            neededAcceleration *= _maxInAirAcceleration;
+            maxAcceleration *= _maxInAirAcceleration;
+        }
+        
+        neededAcceleration = Vector3.ClampMagnitude(neededAcceleration, maxAcceleration);
+
+        _rgBody.AddForce(Vector3.Scale(neededAcceleration * _rgBody.mass, new Vector3(1, 0, 1)));
+    }
+    
     private void HandleJump()
     {
         Vector3 velocity = _rgBody.velocity;
         Vector3 jumpForce = transform.up * _jumpPower;
+        jumpForce *= _bodyMass;
         
         if (_isGrounded && _canJump)
         {
@@ -133,6 +191,7 @@ public class PlayerController : MonoBehaviour
     private void Move(Vector2 movementInput)
     {
         Log("MovementInput:" + movementInput, "Move()");
+        _movementInput = movementInput;
     }
     
     private void Jump()
