@@ -1,12 +1,15 @@
 using System;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerController : MonoBehaviour
 {
     [Header("Component Refs")]
     [SerializeField] private InputHandler _inputHandler;
-
+    [SerializeField] private Transform _cameraAnchor;
+    [SerializeField] private CameraController _cameraController;
+    
     [Header("General Physics")] 
     [SerializeField] private float _gravity;
     
@@ -30,6 +33,10 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private AnimationCurve _maxAccelerationFactor;
     [SerializeField] private float _maxInAirAcceleration;
     
+    [Header("Mouse Sensitivity")]
+    [SerializeField] private float _horizontalSensitivity;
+    [SerializeField] private float _verticalSensitivity;
+    
     //Private Component Refs
     private Rigidbody _rgBody;
     
@@ -44,6 +51,11 @@ public class PlayerController : MonoBehaviour
     
     //Input Variables
     private Vector2 _movementInput;
+    private Vector2 _mouseInput;
+    
+    //Player transform
+    private float _horizontalRotation;
+    private float _verticalRotation;
     
     //Physics Variables
     private float _bodyMass;
@@ -53,6 +65,11 @@ public class PlayerController : MonoBehaviour
     
     private void Awake()
     {
+        //Lock mouse
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+        
+        
         //Get Component Refs
         _rgBody = GetComponent<Rigidbody>();
         _bodyMass = _rgBody.mass;
@@ -70,6 +87,7 @@ public class PlayerController : MonoBehaviour
     void FixedUpdate()
     {
         ApplyGravity();
+        LookAtMouse();
         
         if (_isJumping) return;
         
@@ -79,10 +97,12 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
+        _mouseInput = Mouse.current.delta.value;
+        
         if (!_canJump)
         {
             _jumpTimer += Time.deltaTime;
-
+            
             if (_jumpTimer >= _jumpDelay)
             {
                 _canJump = true;
@@ -90,6 +110,12 @@ public class PlayerController : MonoBehaviour
                 _jumpTimer = 0;
             }
         }
+    }
+
+    private void LateUpdate()
+    {
+        _cameraController.transform.position = _cameraAnchor.position;
+        _cameraController.RotateCamera(_horizontalRotation, _verticalRotation);
     }
 
     #endregion
@@ -179,6 +205,15 @@ public class PlayerController : MonoBehaviour
         }
     }
     
+    private void LookAtMouse()
+    {
+        _verticalRotation -= _mouseInput.y * _verticalSensitivity * Time.deltaTime;
+        _verticalRotation = Mathf.Clamp(_verticalRotation, -90f, 90f);
+        _horizontalRotation += _mouseInput.x * _horizontalSensitivity * Time.deltaTime;
+
+        _rgBody.MoveRotation(Quaternion.AngleAxis(_horizontalRotation, Vector3.up));
+    }
+    
     private void Log(string msg, string funcName = "")
     {
         Debug.Log("[PlayerController]" + funcName + ": " + msg);
@@ -203,6 +238,7 @@ public class PlayerController : MonoBehaviour
     private void Sprint(bool isSprinting)
     {
         Log("Sprint? " + isSprinting);
+        _isSprinting = isSprinting;
     }
 
     #endregion
