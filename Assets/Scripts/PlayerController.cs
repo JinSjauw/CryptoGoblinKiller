@@ -45,6 +45,7 @@ public class PlayerController : MonoBehaviour
     private bool _canJump = true;
     private bool _isJumping;
     private bool _isSprinting;
+    private bool _isWallRunning;
     
     //Private Timers
     private float _jumpTimer;
@@ -86,8 +87,11 @@ public class PlayerController : MonoBehaviour
     
     void FixedUpdate()
     {
-        ApplyGravity();
         LookAtMouse();
+        
+        if(_isWallRunning) return;
+        
+        ApplyGravity();
         
         if (_isJumping) return;
         
@@ -126,11 +130,21 @@ public class PlayerController : MonoBehaviour
     {
         _rgBody.AddForce(Vector3.down * _gravity * _bodyMass);
     }
+
+    private bool RaycastUnderPlayer(float distance,LayerMask layerToCheck, out RaycastHit hit)
+    {
+        if (Physics.Raycast(transform.position, -transform.up, out hit, distance, layerToCheck))
+        {
+            return true;
+        }
+        
+        return false;
+    }
     
     private void Hover()
     {
         //Get the offset
-        if (Physics.Raycast(transform.position, -transform.up, out RaycastHit hit,_rideHeight, LayerMask.GetMask("Ground")))
+        if (RaycastUnderPlayer(_rideHeight + _rideHeight / 2, LayerMask.GetMask("Ground", "SlopedGround"), out RaycastHit hit))
         {
             Vector3 velocity = _rgBody.velocity;
             Vector3 rayDirection = -transform.up;
@@ -148,7 +162,8 @@ public class PlayerController : MonoBehaviour
         {
             _isGrounded = false;
         }
-
+        
+        //Debug sphere
         _rideLineEnd.localPosition = new Vector3(0, -_rideHeight, 0);
     }
 
@@ -177,7 +192,9 @@ public class PlayerController : MonoBehaviour
         
         neededAcceleration = Vector3.ClampMagnitude(neededAcceleration, maxAcceleration);
 
-        _rgBody.AddForce(Vector3.Scale(neededAcceleration * _rgBody.mass, new Vector3(1, 0, 1)));
+        Vector3 force = Vector3.Scale(neededAcceleration * _rgBody.mass, new Vector3(1, 0, 1));
+        
+        _rgBody.AddForce(force);
     }
     
     private void HandleJump()
@@ -217,6 +234,25 @@ public class PlayerController : MonoBehaviour
     private void Log(string msg, string funcName = "")
     {
         Debug.Log("[PlayerController]" + funcName + ": " + msg);
+    }
+    
+    #endregion
+
+    #region Public Functions
+
+    public bool IsGrounded()
+    {
+        return _isGrounded;
+    }
+
+    public Vector2 GetMovementInput()
+    {
+        return _movementInput;
+    }
+
+    public void SetWallRunning(bool state)
+    {
+        _isWallRunning = state;
     }
     
     #endregion
