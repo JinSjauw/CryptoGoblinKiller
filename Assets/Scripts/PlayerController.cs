@@ -25,6 +25,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float _jumpPower;
 
     [Header("Move")] 
+    //[SerializeField] private float _wallRunSpeed;
     [SerializeField] private float _maxMoveSpeed;
     [SerializeField] private float _maxSprintSpeed;
     [SerializeField] private float _acceleration;
@@ -40,12 +41,26 @@ public class PlayerController : MonoBehaviour
     //Private Component Refs
     private Rigidbody _rgBody;
     
+    //Player state
+    private PlayerState _state;
+    
     //Private Flags
     private bool _isGrounded;
     private bool _canJump = true;
     private bool _isJumping;
     private bool _isSprinting;
     private bool _isWallRunning;
+    
+    //Public Properties
+    public bool IsGrounded => _isGrounded;
+    public bool CanJump => _canJump;
+    public bool IsJumping => _isJumping;
+    public bool IsSprinting => _isSprinting;
+    public bool IsWallRunning
+    {
+        get { return _isWallRunning; }
+        set { _isWallRunning = value; }
+    }
     
     //Private Timers
     private float _jumpTimer;
@@ -87,16 +102,18 @@ public class PlayerController : MonoBehaviour
     
     void FixedUpdate()
     {
+        GroundCheck();
         LookAtMouse();
         
         if(_isWallRunning) return;
         
         ApplyGravity();
+        HandleMove(_movementInput);
         
         if (_isJumping) return;
         
         Hover();
-        HandleMove(_movementInput);
+        
     }
 
     private void Update()
@@ -140,6 +157,18 @@ public class PlayerController : MonoBehaviour
         
         return false;
     }
+
+    private void GroundCheck()
+    {
+        if (RaycastUnderPlayer(_rideHeight, LayerMask.GetMask("Ground", "SlopedGround"), out RaycastHit hit))
+        {
+            _isGrounded = true;
+        }
+        else
+        {
+            _isGrounded = false;
+        }
+    }
     
     private void Hover()
     {
@@ -155,12 +184,6 @@ public class PlayerController : MonoBehaviour
             float springForce = ((x * _springPower) - (rayDirectionVelocity * _dampPower)) * _bodyMass;
             
             _rgBody.AddForce(rayDirection * springForce);
-
-            _isGrounded = true;
-        }
-        else
-        {
-            _isGrounded = false;
         }
         
         //Debug sphere
@@ -169,41 +192,27 @@ public class PlayerController : MonoBehaviour
 
     private void HandleMove(Vector2 movementInput)
     {
+        //Need to check if it is x or y that is 0 then use 
+        if (!_isGrounded && movementInput.magnitude <= 0)
+        {
+            return;
+        }
+        
         Vector3 targetDirection = new Vector3(movementInput.x, 0, movementInput.y);
         targetDirection = transform.TransformDirection(targetDirection);
         
-        Vector3 unitVelocity = _targetVelocity.normalized;
-
-        float velocityDot = Vector3.Dot(targetDirection, unitVelocity);
-        float currentAcceleration = _acceleration * _accelerationFactor.Evaluate(velocityDot);
-
-        Vector3 maxTargetVelocity = targetDirection * (_isSprinting ? _maxSprintSpeed : _maxMoveSpeed);
-
-        _targetVelocity = Vector3.MoveTowards(_targetVelocity, maxTargetVelocity, currentAcceleration * Time.fixedDeltaTime);
-
-        Vector3 neededAcceleration = (_targetVelocity - _rgBody.velocity) / Time.fixedDeltaTime;
-        float maxAcceleration = _maxAcceleration * _maxAccelerationFactor.Evaluate(velocityDot);
-
-        if (!_isGrounded)
-        {
-            neededAcceleration *= _maxInAirAcceleration;
-            maxAcceleration *= _maxInAirAcceleration;
-        }
-        
-        neededAcceleration = Vector3.ClampMagnitude(neededAcceleration, maxAcceleration);
-
-        Vector3 force = Vector3.Scale(neededAcceleration * _rgBody.mass, new Vector3(1, 0, 1));
-        
-        _rgBody.AddForce(force);
+        ApplyForce(targetDirection);
     }
     
     private void HandleJump()
     {
+        if (_isWallRunning) return;
+        
         Vector3 velocity = _rgBody.velocity;
         Vector3 jumpForce = transform.up * _jumpPower;
         jumpForce *= _bodyMass;
         
-        if (_isGrounded && _canJump)
+        if ((_isGrounded) && _canJump)
         {
             _isJumping = true;
             //Reset rgBody velocity;
@@ -227,7 +236,9 @@ public class PlayerController : MonoBehaviour
         _verticalRotation -= _mouseInput.y * _verticalSensitivity * Time.deltaTime;
         _verticalRotation = Mathf.Clamp(_verticalRotation, -90f, 90f);
         _horizontalRotation += _mouseInput.x * _horizontalSensitivity * Time.deltaTime;
-
+        
+        //if(_isWallRunning) return;
+        
         _rgBody.MoveRotation(Quaternion.AngleAxis(_horizontalRotation, Vector3.up));
     }
     
@@ -240,19 +251,37 @@ public class PlayerController : MonoBehaviour
 
     #region Public Functions
 
-    public bool IsGrounded()
+    public void ApplyForce(Vector3 targetDirection, float wallRunSpeed = 0)
     {
-        return _isGrounded;
-    }
+        Vector3 unitVelocity = _targetVelocity.normalized;
 
-    public Vector2 GetMovementInput()
-    {
-        return _movementInput;
-    }
+        float velocityDot = Vector3.Dot(targetDirection, unitVelocity);
+        float currentAcceleration = _acceleration * _accelerationFactor.Evaluate(velocityDot);
 
-    public void SetWallRunning(bool state)
-    {
-        _isWallRunning = state;
+        float speed = _isSprinting ? _maxSprintSpeed : _maxMoveSpeed;
+
+        if (_isWallRunning)
+        {
+            speed = wallRunSpeed;
+        }
+        
+        Vector3 maxTargetVelocity = targetDirection * speed;
+
+        _targetVelocity = Vector3.MoveTowards(_targetVelocity, maxTargetVelocity, currentAcceleration * Time.fixedDeltaTime);
+        
+        Vector3 neededAcceleration = (_targetVelocity - _rgBody.velocity) / Time.fixedDeltaTime;
+        float maxAcceleration = _maxAcceleration * _maxAccelerationFactor.Evaluate(velocityDot);
+        
+        neededAcceleration = Vector3.ClampMagnitude(neededAcceleration, maxAcceleration);
+        
+        Vector3 force = Vector3.Scale(neededAcceleration * _rgBody.mass, new Vector3(1, 0, 1));
+
+        if (!_isGrounded && !_isWallRunning)
+        {
+            force *= _maxInAirAcceleration;
+        }
+        
+        _rgBody.AddForce(force);
     }
     
     #endregion
