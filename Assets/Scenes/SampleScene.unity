@@ -152,7 +152,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1011574230}
+  - {fileID: 1565596347}
   - {fileID: 584710342}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -4248,7 +4248,7 @@ GameObject:
   - component: {fileID: 584710343}
   - component: {fileID: 584710345}
   m_Layer: 0
-  m_Name: Player
+  m_Name: PlayerController
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4287,14 +4287,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _inputHandler: {fileID: 11400000, guid: 675fd9ce7169e5645a5a9a3315e93aab, type: 2}
   _cameraAnchor: {fileID: 1919378316}
-  _cameraController: {fileID: 1011574229}
+  _cameraController: {fileID: 1565596348}
   _gravity: 60
   _rideLineEnd: {fileID: 553131158}
   _rideHeight: 2
   _springPower: 185
   _dampPower: 15
   _canDoubleJump: 0
-  _jumpDelay: 0.5
+  _jumpDelay: 0.2
   _jumpPower: 20
   _maxMoveSpeed: 10
   _maxSprintSpeed: 15
@@ -4412,13 +4412,16 @@ MonoBehaviour:
   _wallMask:
     serializedVersion: 2
     m_Bits: 128
-  _wallRunTime: 1.5
-  _wallCheckDistance: 1.5
-  _wallRunSpeed: 19
+  _wallRunGravity: 45
+  _wallRunTime: 1.75
+  _wallCheckDistance: 1.2
+  _wallRunSpeed: 18
   _wallClimbSpeed: 4
   _wallJumpUpForce: 14
   _wallJumpSideForce: 20
   _WallExitTime: 0.2
+  _wallExitUpForce: 8
+  _wallExitSideForce: 10
 --- !u!43 &689951328
 Mesh:
   m_ObjectHideFlags: 0
@@ -5278,7 +5281,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1011574230}
-  - component: {fileID: 1011574229}
   m_Layer: 0
   m_Name: CameraHolder
   m_TagString: Untagged
@@ -5286,18 +5288,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1011574229
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1011574228}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cab8263383795e243938a1248a386031, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &1011574230
 Transform:
   m_ObjectHideFlags: 0
@@ -5312,7 +5302,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 330585546}
-  m_Father: {fileID: 12826152}
+  m_Father: {fileID: 1565596347}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1328280363
 GameObject:
@@ -9010,6 +9000,60 @@ Mesh:
     offset: 0
     size: 0
     path: 
+--- !u!1 &1565596346
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1565596347}
+  - component: {fileID: 1565596348}
+  m_Layer: 0
+  m_Name: CameraController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1565596347
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1565596346}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1011574230}
+  m_Father: {fileID: 12826152}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1565596348
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1565596346}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cab8263383795e243938a1248a386031, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _cameraHolder: {fileID: 1011574230}
+  _normalFOV: 60
+  _sprintFOV: 75
+  _wallRunFOV: 75
+  _fovSpringFrequency: 17
+  _fovDampingRatio: 0.8
+  _tiltAmount: 15
+  _tiltSpringFrequency: 30
+  _tiltDampRatio: 0.75
 --- !u!1 &1649320456
 GameObject:
   m_ObjectHideFlags: 0

@@ -157,10 +157,24 @@ public class PlayerController : MonoBehaviour
         
         return false;
     }
+    
+    private bool RaycastUnderPlayer(float distance,LayerMask layerToCheck)
+    {
+        if (Physics.Raycast(transform.position, -transform.up, distance, layerToCheck))
+        {
+            return true;
+        }
+        
+        return false;
+    }
 
     private void GroundCheck()
     {
-        if (RaycastUnderPlayer(_rideHeight, LayerMask.GetMask("Ground", "SlopedGround"), out RaycastHit hit))
+        if (RaycastUnderPlayer(_rideHeight, LayerMask.GetMask("Ground")))
+        {
+            _isGrounded = true;
+        }
+        else if(RaycastUnderPlayer(_rideHeight + _rideHeight / 2, LayerMask.GetMask("SlopedGround")))
         {
             _isGrounded = true;
         }
@@ -218,7 +232,7 @@ public class PlayerController : MonoBehaviour
             //Reset rgBody velocity;
             _rgBody.velocity = new Vector3(velocity.x, 0, velocity.z);
             _rgBody.AddForce(jumpForce, ForceMode.Impulse);
-            Log("Jumped!", "Jump()");
+            //Log("Jumped!", "Jump()");
             _canJump = false;
         }
         else if (!_isGrounded && _canJump && _canDoubleJump)
@@ -226,7 +240,7 @@ public class PlayerController : MonoBehaviour
             _isJumping = true;
             _rgBody.velocity = new Vector3(velocity.x, 0, velocity.z);
             _rgBody.AddForce(jumpForce, ForceMode.Impulse);
-            Log("Jumped!", "Jump()");
+            //Log("Jumped!", "Jump()");
             _canJump = false;
         }
     }
@@ -290,8 +304,13 @@ public class PlayerController : MonoBehaviour
 
     private void Move(Vector2 movementInput)
     {
-        Log("MovementInput:" + movementInput, "Move()");
+        //Log("MovementInput:" + movementInput, "Move()");
         _movementInput = movementInput;
+
+        if (_movementInput.magnitude <= 0)
+        {
+            _cameraController.ChangeFOV(CameraFOV.NEUTRAL);
+        }
     }
     
     private void Jump()
@@ -302,8 +321,17 @@ public class PlayerController : MonoBehaviour
     
     private void Sprint(bool isSprinting)
     {
-        Log("Sprint? " + isSprinting);
+        //Log("Sprint? " + isSprinting);
         _isSprinting = isSprinting;
+        
+        if (_movementInput.magnitude > 0 && _isSprinting)
+        {
+            _cameraController.ChangeFOV(CameraFOV.SPRINTING);
+        }
+        else if (!_isSprinting && !_isWallRunning)
+        {
+            _cameraController.ChangeFOV(CameraFOV.NEUTRAL);
+        }
     }
 
     #endregion
