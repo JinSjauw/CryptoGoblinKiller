@@ -9,6 +9,7 @@ public class InputHandler : ScriptableObject, StandardInput.IGameplayActions
     public UnityAction<Vector2> MoveEvent;
     public UnityAction JumpEvent;
     public UnityAction<bool> SprintEvent;
+    public UnityAction<bool> GrappleEvent;
     
     private StandardInput _input;
     
@@ -49,6 +50,19 @@ public class InputHandler : ScriptableObject, StandardInput.IGameplayActions
         if (context.canceled)
         {
             SprintEvent.Invoke(false);
+        }
+    }
+
+    public void OnGrapple(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            GrappleEvent.Invoke(true);
+        }
+
+        if (context.canceled)
+        {
+            GrappleEvent.Invoke(false);
         }
     }
 }

@@ -53,6 +53,15 @@ public partial class @StandardInput: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Grapple"",
+                    ""type"": ""Button"",
+                    ""id"": ""4118abf8-811d-4444-a524-b3b040901bf4"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -132,6 +141,17 @@ public partial class @StandardInput: IInputActionCollection2, IDisposable
                     ""action"": ""Sprint"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""04cb9166-6a21-43ea-ad16-2bb2c1ee809a"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Grapple"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -143,6 +163,7 @@ public partial class @StandardInput: IInputActionCollection2, IDisposable
         m_Gameplay_Move = m_Gameplay.FindAction("Move", throwIfNotFound: true);
         m_Gameplay_Jump = m_Gameplay.FindAction("Jump", throwIfNotFound: true);
         m_Gameplay_Sprint = m_Gameplay.FindAction("Sprint", throwIfNotFound: true);
+        m_Gameplay_Grapple = m_Gameplay.FindAction("Grapple", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -207,6 +228,7 @@ public partial class @StandardInput: IInputActionCollection2, IDisposable
     private readonly InputAction m_Gameplay_Move;
     private readonly InputAction m_Gameplay_Jump;
     private readonly InputAction m_Gameplay_Sprint;
+    private readonly InputAction m_Gameplay_Grapple;
     public struct GameplayActions
     {
         private @StandardInput m_Wrapper;
@@ -214,6 +236,7 @@ public partial class @StandardInput: IInputActionCollection2, IDisposable
         public InputAction @Move => m_Wrapper.m_Gameplay_Move;
         public InputAction @Jump => m_Wrapper.m_Gameplay_Jump;
         public InputAction @Sprint => m_Wrapper.m_Gameplay_Sprint;
+        public InputAction @Grapple => m_Wrapper.m_Gameplay_Grapple;
         public InputActionMap Get() { return m_Wrapper.m_Gameplay; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -232,6 +255,9 @@ public partial class @StandardInput: IInputActionCollection2, IDisposable
             @Sprint.started += instance.OnSprint;
             @Sprint.performed += instance.OnSprint;
             @Sprint.canceled += instance.OnSprint;
+            @Grapple.started += instance.OnGrapple;
+            @Grapple.performed += instance.OnGrapple;
+            @Grapple.canceled += instance.OnGrapple;
         }
 
         private void UnregisterCallbacks(IGameplayActions instance)
@@ -245,6 +271,9 @@ public partial class @StandardInput: IInputActionCollection2, IDisposable
             @Sprint.started -= instance.OnSprint;
             @Sprint.performed -= instance.OnSprint;
             @Sprint.canceled -= instance.OnSprint;
+            @Grapple.started -= instance.OnGrapple;
+            @Grapple.performed -= instance.OnGrapple;
+            @Grapple.canceled -= instance.OnGrapple;
         }
 
         public void RemoveCallbacks(IGameplayActions instance)
@@ -267,5 +296,6 @@ public partial class @StandardInput: IInputActionCollection2, IDisposable
         void OnMove(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
         void OnSprint(InputAction.CallbackContext context);
+        void OnGrapple(InputAction.CallbackContext context);
     }
 }

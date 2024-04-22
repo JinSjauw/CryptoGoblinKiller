@@ -50,6 +50,7 @@ public class PlayerController : MonoBehaviour
     private bool _isJumping;
     private bool _isSprinting;
     private bool _isWallRunning;
+    private bool _isSwinging;
     
     //Public Properties
     public bool IsGrounded => _isGrounded;
@@ -58,8 +59,14 @@ public class PlayerController : MonoBehaviour
     public bool IsSprinting => _isSprinting;
     public bool IsWallRunning
     {
-        get { return _isWallRunning; }
-        set { _isWallRunning = value; }
+        get => _isWallRunning;
+        set => _isWallRunning = value; 
+    }
+
+    public bool IsSwinging
+    {
+        get => _isSwinging;
+        set => _isSwinging = value;
     }
     
     //Private Timers
@@ -102,15 +109,15 @@ public class PlayerController : MonoBehaviour
     
     void FixedUpdate()
     {
-        GroundCheck();
         LookAtMouse();
         
         if(_isWallRunning) return;
         
+        GroundCheck();
         ApplyGravity();
         HandleMove(_movementInput);
         
-        if (_isJumping) return;
+        if (_isJumping || _isSwinging) return;
         
         Hover();
         

@@ -150,6 +150,11 @@ public class CameraController : MonoBehaviour
 
         _cameraHolder.localEulerAngles = rotationVector;
     }
+
+    public Vector3 CameraForward()
+    {
+        return _playerCamera.transform.forward;
+    }
 }
 
 public enum CameraFOV
