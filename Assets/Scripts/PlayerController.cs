@@ -92,7 +92,6 @@ public class PlayerController : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         
-        
         //Get Component Refs
         _rgBody = GetComponent<Rigidbody>();
         _bodyMass = _rgBody.mass;
@@ -109,23 +108,22 @@ public class PlayerController : MonoBehaviour
     
     void FixedUpdate()
     {
-        LookAtMouse();
-        
         if(_isWallRunning) return;
         
+        RotatePlayer();
         GroundCheck();
         ApplyGravity();
-        HandleMove(_movementInput);
         
+        HandleMove(_movementInput);
         if (_isJumping || _isSwinging) return;
         
         Hover();
-        
     }
 
     private void Update()
     {
         _mouseInput = Mouse.current.delta.value;
+        LookAtMouse();
         
         if (!_canJump)
         {
@@ -254,12 +252,17 @@ public class PlayerController : MonoBehaviour
     
     private void LookAtMouse()
     {
-        _verticalRotation -= _mouseInput.y * _verticalSensitivity * Time.deltaTime;
+        _verticalRotation -= _mouseInput.y * _verticalSensitivity * Time.smoothDeltaTime;
         _verticalRotation = Mathf.Clamp(_verticalRotation, -90f, 90f);
-        _horizontalRotation += _mouseInput.x * _horizontalSensitivity * Time.deltaTime;
+        _horizontalRotation += _mouseInput.x * _horizontalSensitivity * Time.smoothDeltaTime;
         
         //if(_isWallRunning) return;
         
+        //_rgBody.MoveRotation(Quaternion.AngleAxis(_horizontalRotation, Vector3.up));
+    }
+
+    private void RotatePlayer()
+    {
         _rgBody.MoveRotation(Quaternion.AngleAxis(_horizontalRotation, Vector3.up));
     }
     

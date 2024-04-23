@@ -13,6 +13,7 @@ public class WallRunning : MonoBehaviour
     [SerializeField] private float _wallRunGravity;
     [SerializeField] private float _wallRunTime;
     [SerializeField] private float _wallCheckDistance;
+    [SerializeField] private float _wallForwardCheckDistance;
     [SerializeField] private float _wallRunSpeed;
     [SerializeField] private float _wallClimbSpeed;
 
@@ -30,12 +31,15 @@ public class WallRunning : MonoBehaviour
 
     private RaycastHit _wallLeftHit;
     private RaycastHit _wallRightHit;
+    private RaycastHit _wallForwardHit;
 
     private bool _right;
     private bool _left;
+    private bool _forward;
     private bool _exitingWall;
     
     private Vector2 _movementInput;
+    private Transform _currentWall;
     
     //Private Component Refs
     private Rigidbody _rgBody;
@@ -61,7 +65,8 @@ public class WallRunning : MonoBehaviour
         CheckState();
         //check if I can wall run
     }
-
+    
+    //Add camera forward vector aswell
     private void WallJump(float upForce, float sideForce)
     {
         if (!_playerController.IsWallRunning) return;
@@ -93,6 +98,7 @@ public class WallRunning : MonoBehaviour
     {
         _right = Physics.Raycast(transform.position, transform.right, out _wallRightHit, _wallCheckDistance, _wallMask);
         _left = Physics.Raycast(transform.position, -transform.right, out _wallLeftHit, _wallCheckDistance, _wallMask);
+        _forward = Physics.Raycast(transform.position, transform.forward, out _wallForwardHit, _wallForwardCheckDistance, _wallMask);
     }
 
     private void CheckState()
@@ -157,7 +163,11 @@ public class WallRunning : MonoBehaviour
 
         Vector3 wallNormal;
 
-        if (_right)
+        if (_forward)
+        {
+            wallNormal = _wallForwardHit.normal;
+        }
+        else if (_right)
         {
             wallNormal = _wallRightHit.normal;
             _cameraController.ChangeTilt(CameraTilt.RIGHT);
@@ -174,7 +184,9 @@ public class WallRunning : MonoBehaviour
         {
             wallForward = -wallForward;
         }
-
+        
+        transform.forward = wallForward;
+        
         if ((_right && _movementInput.x > .7f) || (_left && _movementInput.x < -.7f))
         {
             //Upwards

@@ -143,6 +143,11 @@ public class CameraController : MonoBehaviour
                 break;
         }
     }
+
+    public void SpringCameraAngleAxis(Vector3 axis, float angle)
+    {
+        
+    }
     
     public void RotateCamera(float horizontal, float vertical)
     {
