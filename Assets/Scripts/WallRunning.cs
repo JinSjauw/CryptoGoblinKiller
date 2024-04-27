@@ -61,6 +61,8 @@ public class WallRunning : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if(_playerController.IsSwinging) return;
+        
         CheckForWall();
         CheckState();
         //check if I can wall run
@@ -106,7 +108,7 @@ public class WallRunning : MonoBehaviour
         //Has hit wall and is in air
         if((_left || _right) && _movementInput.magnitude > 0 && !_playerController.IsGrounded && !_exitingWall)
         {
-            if (!_playerController.IsWallRunning)
+            if (!_playerController.IsWallRunning && !_playerController.IsSwinging)
             {
                 _playerController.IsWallRunning = true;
                 _wallRunTimer = 0;
@@ -163,7 +165,7 @@ public class WallRunning : MonoBehaviour
 
         Vector3 wallNormal;
 
-        if (_forward)
+        if (_forward && (_right || _left))
         {
             wallNormal = _wallForwardHit.normal;
         }

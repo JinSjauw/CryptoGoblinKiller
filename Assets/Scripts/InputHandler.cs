@@ -10,6 +10,9 @@ public class InputHandler : ScriptableObject, StandardInput.IGameplayActions
     public UnityAction JumpEvent;
     public UnityAction<bool> SprintEvent;
     public UnityAction<bool> GrappleEvent;
+    public UnityAction<Vector2> GrappleActuateEvent;
+
+    private Vector2 _grappleRopeInput;
     
     private StandardInput _input;
     
@@ -64,5 +67,35 @@ public class InputHandler : ScriptableObject, StandardInput.IGameplayActions
         {
             GrappleEvent.Invoke(false);
         }
+    }
+
+    public void OnExtendRope(InputAction.CallbackContext context)
+    {
+        /*if (context.performed)
+        {
+            _grappleRopeInput.x = 1;
+            GrappleActuateEvent.Invoke(_grappleRopeInput);
+        }
+
+        if (context.canceled)
+        {
+            _grappleRopeInput.x = 0;
+            GrappleActuateEvent.Invoke(_grappleRopeInput);
+        }*/
+    }
+
+    public void OnShortenRope(InputAction.CallbackContext context)
+    {
+        /*if (context.performed)
+        {
+            _grappleRopeInput.y = 1;
+            GrappleActuateEvent.Invoke(_grappleRopeInput);
+        }
+
+        if (context.canceled)
+        {
+            _grappleRopeInput.y = 0;
+            GrappleActuateEvent.Invoke(_grappleRopeInput);
+        }*/
     }
 }

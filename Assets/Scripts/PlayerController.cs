@@ -5,7 +5,7 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerController : MonoBehaviour
 {
-    [Header("Component Refs")]
+    [Header("Object Refs")]
     [SerializeField] private InputHandler _inputHandler;
     [SerializeField] private Transform _cameraAnchor;
     [SerializeField] private CameraController _cameraController;
@@ -24,8 +24,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float _jumpDelay;
     [SerializeField] private float _jumpPower;
 
-    [Header("Move")] 
+    [Header("Move")]
     //[SerializeField] private float _wallRunSpeed;
+    [SerializeField] private float _maxSwingingSpeed;
     [SerializeField] private float _maxMoveSpeed;
     [SerializeField] private float _maxSprintSpeed;
     [SerializeField] private float _acceleration;
@@ -42,7 +43,7 @@ public class PlayerController : MonoBehaviour
     private Rigidbody _rgBody;
     
     //Player state
-    private PlayerState _state;
+    //private PlayerState _state;
     
     //Private Flags
     private bool _isGrounded;
@@ -112,10 +113,13 @@ public class PlayerController : MonoBehaviour
         
         RotatePlayer();
         GroundCheck();
-        ApplyGravity();
         
+        if(_isSwinging) return;
+        
+        ApplyGravity();
         HandleMove(_movementInput);
-        if (_isJumping || _isSwinging) return;
+        
+        if (_isJumping) return;
         
         Hover();
     }
@@ -288,6 +292,11 @@ public class PlayerController : MonoBehaviour
         {
             speed = wallRunSpeed;
         }
+
+        if (_isSwinging)
+        {
+            speed = _maxSwingingSpeed;
+        }
         
         Vector3 maxTargetVelocity = targetDirection * speed;
 
@@ -300,7 +309,7 @@ public class PlayerController : MonoBehaviour
         
         Vector3 force = Vector3.Scale(neededAcceleration * _rgBody.mass, new Vector3(1, 0, 1));
 
-        if (!_isGrounded && !_isWallRunning)
+        if (!_isGrounded && !_isWallRunning && !_isSwinging)
         {
             force *= _maxInAirAcceleration;
         }

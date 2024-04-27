@@ -62,6 +62,24 @@ public partial class @StandardInput: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ExtendRope"",
+                    ""type"": ""Button"",
+                    ""id"": ""772bbe28-72c1-41c5-8160-96649d0aa627"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ShortenRope"",
+                    ""type"": ""Button"",
+                    ""id"": ""c3dfd81e-4f05-41d3-b15f-aedbf3121c9f"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -152,6 +170,28 @@ public partial class @StandardInput: IInputActionCollection2, IDisposable
                     ""action"": ""Grapple"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e1389769-6d44-4196-889b-f17b8935730c"",
+                    ""path"": ""<Keyboard>/leftShift"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ExtendRope"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""eacef3c1-a27c-48e5-8847-8ef27fc89b82"",
+                    ""path"": ""<Keyboard>/space"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ShortenRope"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -164,6 +204,8 @@ public partial class @StandardInput: IInputActionCollection2, IDisposable
         m_Gameplay_Jump = m_Gameplay.FindAction("Jump", throwIfNotFound: true);
         m_Gameplay_Sprint = m_Gameplay.FindAction("Sprint", throwIfNotFound: true);
         m_Gameplay_Grapple = m_Gameplay.FindAction("Grapple", throwIfNotFound: true);
+        m_Gameplay_ExtendRope = m_Gameplay.FindAction("ExtendRope", throwIfNotFound: true);
+        m_Gameplay_ShortenRope = m_Gameplay.FindAction("ShortenRope", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -229,6 +271,8 @@ public partial class @StandardInput: IInputActionCollection2, IDisposable
     private readonly InputAction m_Gameplay_Jump;
     private readonly InputAction m_Gameplay_Sprint;
     private readonly InputAction m_Gameplay_Grapple;
+    private readonly InputAction m_Gameplay_ExtendRope;
+    private readonly InputAction m_Gameplay_ShortenRope;
     public struct GameplayActions
     {
         private @StandardInput m_Wrapper;
@@ -237,6 +281,8 @@ public partial class @StandardInput: IInputActionCollection2, IDisposable
         public InputAction @Jump => m_Wrapper.m_Gameplay_Jump;
         public InputAction @Sprint => m_Wrapper.m_Gameplay_Sprint;
         public InputAction @Grapple => m_Wrapper.m_Gameplay_Grapple;
+        public InputAction @ExtendRope => m_Wrapper.m_Gameplay_ExtendRope;
+        public InputAction @ShortenRope => m_Wrapper.m_Gameplay_ShortenRope;
         public InputActionMap Get() { return m_Wrapper.m_Gameplay; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -258,6 +304,12 @@ public partial class @StandardInput: IInputActionCollection2, IDisposable
             @Grapple.started += instance.OnGrapple;
             @Grapple.performed += instance.OnGrapple;
             @Grapple.canceled += instance.OnGrapple;
+            @ExtendRope.started += instance.OnExtendRope;
+            @ExtendRope.performed += instance.OnExtendRope;
+            @ExtendRope.canceled += instance.OnExtendRope;
+            @ShortenRope.started += instance.OnShortenRope;
+            @ShortenRope.performed += instance.OnShortenRope;
+            @ShortenRope.canceled += instance.OnShortenRope;
         }
 
         private void UnregisterCallbacks(IGameplayActions instance)
@@ -274,6 +326,12 @@ public partial class @StandardInput: IInputActionCollection2, IDisposable
             @Grapple.started -= instance.OnGrapple;
             @Grapple.performed -= instance.OnGrapple;
             @Grapple.canceled -= instance.OnGrapple;
+            @ExtendRope.started -= instance.OnExtendRope;
+            @ExtendRope.performed -= instance.OnExtendRope;
+            @ExtendRope.canceled -= instance.OnExtendRope;
+            @ShortenRope.started -= instance.OnShortenRope;
+            @ShortenRope.performed -= instance.OnShortenRope;
+            @ShortenRope.canceled -= instance.OnShortenRope;
         }
 
         public void RemoveCallbacks(IGameplayActions instance)
@@ -297,5 +355,7 @@ public partial class @StandardInput: IInputActionCollection2, IDisposable
         void OnJump(InputAction.CallbackContext context);
         void OnSprint(InputAction.CallbackContext context);
         void OnGrapple(InputAction.CallbackContext context);
+        void OnExtendRope(InputAction.CallbackContext context);
+        void OnShortenRope(InputAction.CallbackContext context);
     }
 }
