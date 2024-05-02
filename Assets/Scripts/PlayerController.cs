@@ -1,4 +1,5 @@
 using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -9,6 +10,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private InputHandler _inputHandler;
     [SerializeField] private Transform _cameraAnchor;
     [SerializeField] private CameraController _cameraController;
+    [SerializeField] private TextMeshProUGUI _speedText;
     
     [Header("General Physics")] 
     [SerializeField] private float _gravity;
@@ -64,6 +66,11 @@ public class PlayerController : MonoBehaviour
         set => _isWallRunning = value; 
     }
 
+    public float Acceleration
+    {
+        set => _acceleration = value;
+    }
+    
     public bool IsSwinging
     {
         get => _isSwinging;
@@ -72,9 +79,11 @@ public class PlayerController : MonoBehaviour
     
     //Private Timers
     private float _jumpTimer;
+    private float _velocityTime;
     
     //Input Variables
     private Vector2 _movementInput;
+    private Vector2 _lastMovementInput;
     private Vector2 _mouseInput;
     
     //Player transform
@@ -83,7 +92,9 @@ public class PlayerController : MonoBehaviour
     
     //Physics Variables
     private float _bodyMass;
-    private Vector3 _targetVelocity;
+    private Vector3 _currentVelocity;
+    private float _currentSpeed;
+    private float _currentAcceleration;
     
     #region Unity Functions
     
@@ -109,6 +120,9 @@ public class PlayerController : MonoBehaviour
     
     void FixedUpdate()
     {
+        _speedText.text = "Speed: " + _rgBody.velocity.magnitude + "\n" 
+                          + "TargetVelocity: " + _currentVelocity.magnitude;
+        
         if(_isWallRunning) return;
         
         RotatePlayer();
@@ -117,10 +131,10 @@ public class PlayerController : MonoBehaviour
         if(_isSwinging) return;
         
         ApplyGravity();
-        HandleMove(_movementInput);
         
         if (_isJumping) return;
         
+        HandleMove(_movementInput);
         Hover();
     }
 
@@ -220,6 +234,12 @@ public class PlayerController : MonoBehaviour
         {
             return;
         }
+
+        if (_movementInput.magnitude <= 0)
+        {
+            //return;
+            _lastMovementInput = _movementInput;
+        }
         
         Vector3 targetDirection = new Vector3(movementInput.x, 0, movementInput.y);
         targetDirection = transform.TransformDirection(targetDirection);
@@ -259,15 +279,39 @@ public class PlayerController : MonoBehaviour
         _verticalRotation -= _mouseInput.y * _verticalSensitivity * Time.smoothDeltaTime;
         _verticalRotation = Mathf.Clamp(_verticalRotation, -90f, 90f);
         _horizontalRotation += _mouseInput.x * _horizontalSensitivity * Time.smoothDeltaTime;
-        
-        //if(_isWallRunning) return;
-        
-        //_rgBody.MoveRotation(Quaternion.AngleAxis(_horizontalRotation, Vector3.up));
     }
 
     private void RotatePlayer()
     {
         _rgBody.MoveRotation(Quaternion.AngleAxis(_horizontalRotation, Vector3.up));
+    }
+
+    private Vector3 CollideAndSlide(Vector3 velocity, Vector3 position, int depth)
+    {
+        if (depth >= 2)
+        {
+            return velocity;
+        }
+        
+        float distance = velocity.magnitude;
+
+        RaycastHit hit;
+        if (Physics.Raycast(position, transform.forward, out hit, 2f, LayerMask.GetMask("Wall")))
+        {
+            Vector3 snapToSurface = velocity.normalized * (hit.distance);
+            Vector3 leftover = velocity - snapToSurface;
+
+            float magnitude = leftover.magnitude;
+            leftover = Vector3.ProjectOnPlane(leftover, hit.normal).normalized;
+            leftover *= magnitude;
+
+            //_rgBody.velocity = leftover;
+            
+            return leftover;
+            //return snapToSurface + CollideAndSlide(leftover, position + snapToSurface, depth + 1);
+        }
+        
+        return velocity;
     }
     
     private void Log(string msg, string funcName = "")
@@ -279,42 +323,71 @@ public class PlayerController : MonoBehaviour
 
     #region Public Functions
 
-    public void ApplyForce(Vector3 targetDirection, float wallRunSpeed = 0)
+    public void ApplyForce(Vector3 targetDirection, float maxMoveSpeed = 0)
     {
-        Vector3 unitVelocity = _targetVelocity.normalized;
+        Vector3 unitVelocity = _currentVelocity.normalized;
 
         float velocityDot = Vector3.Dot(targetDirection, unitVelocity);
-        float currentAcceleration = _acceleration * _accelerationFactor.Evaluate(velocityDot);
+        float desiredAcceleration = _acceleration * _accelerationFactor.Evaluate(velocityDot);
 
-        float speed = _isSprinting ? _maxSprintSpeed : _maxMoveSpeed;
+        float desiredSpeed = _isSprinting ? _maxSprintSpeed : _maxMoveSpeed;
 
-        if (_isWallRunning)
+        if (_isWallRunning && maxMoveSpeed > 0)
         {
-            speed = wallRunSpeed;
+            desiredSpeed = maxMoveSpeed;
         }
 
-        if (_isSwinging)
+        /*if (_isSwinging)
         {
-            speed = _maxSwingingSpeed;
-        }
+            desiredSpeed = _maxSwingingSpeed;
+        }*/
         
-        Vector3 maxTargetVelocity = targetDirection * speed;
-
-        _targetVelocity = Vector3.MoveTowards(_targetVelocity, maxTargetVelocity, currentAcceleration * Time.fixedDeltaTime);
+        Vector3 desiredVelocity = targetDirection * desiredSpeed;
         
-        Vector3 neededAcceleration = (_targetVelocity - _rgBody.velocity) / Time.fixedDeltaTime;
+        /*if (_isWallRunning)
+        {
+            desiredVelocity = CollideAndSlide(desiredVelocity, transform.position, 0);
+        }*/
+        
+        _currentVelocity = Vector3.MoveTowards(_currentVelocity, desiredVelocity, desiredAcceleration * Time.fixedDeltaTime);
+        
+        Vector3 neededAcceleration = (_currentVelocity - _rgBody.velocity) / Time.fixedDeltaTime;
+        
+        
+        
         float maxAcceleration = _maxAcceleration * _maxAccelerationFactor.Evaluate(velocityDot);
-        
         neededAcceleration = Vector3.ClampMagnitude(neededAcceleration, maxAcceleration);
         
         Vector3 force = Vector3.Scale(neededAcceleration * _rgBody.mass, new Vector3(1, 0, 1));
-
+        
         if (!_isGrounded && !_isWallRunning && !_isSwinging)
         {
             force *= _maxInAirAcceleration;
         }
         
+        //Do a collide and slide call
+        
+        if (_isWallRunning && Physics.Raycast(transform.position, _currentVelocity.normalized, out RaycastHit hit, 2f, LayerMask.GetMask("Wall")))
+        {
+            Vector3 snapToSurface = unitVelocity * (hit.distance);
+            Vector3 leftover = _currentVelocity - snapToSurface;
+
+            float magnitude = leftover.magnitude;
+            leftover = Vector3.ProjectOnPlane(leftover, hit.normal).normalized;
+            leftover *= magnitude;
+
+            _rgBody.velocity = leftover;
+            _currentVelocity = _rgBody.velocity;
+            
+            return;
+            
+            //return snapToSurface + CollideAndSlide(leftover, position + snapToSurface, depth + 1);
+            //neededAcceleration = ((snapToSurface + leftover) - _rgBody.velocity) / Time.fixedDeltaTime;
+        }
+        
         _rgBody.AddForce(force);
+        
+        _currentVelocity = _rgBody.velocity;
     }
     
     #endregion

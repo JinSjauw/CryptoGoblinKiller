@@ -18,6 +18,7 @@ public class WallRunning : MonoBehaviour
     [SerializeField] private float _wallClimbSpeed;
 
     [Header("Wall Jump")] 
+    [SerializeField] private float _wallJumpForwardForce;
     [SerializeField] private float _wallJumpUpForce;
     [SerializeField] private float _wallJumpSideForce;
     [SerializeField] private float _WallExitTime;
@@ -69,7 +70,7 @@ public class WallRunning : MonoBehaviour
     }
     
     //Add camera forward vector aswell
-    private void WallJump(float upForce, float sideForce)
+    private void WallJump(float upForce, float sideForce, float forwardForce)
     {
         if (!_playerController.IsWallRunning) return;
         if(!_playerController.CanJump) return;
@@ -78,8 +79,17 @@ public class WallRunning : MonoBehaviour
         _exitingWall = true;
         
         Vector3 wallNormal = _right ? _wallRightHit.normal : _wallLeftHit.normal;
-
-        Vector3 wallJumpForce = transform.up * upForce + wallNormal * sideForce;
+        Vector3 wallJumpForce;
+        
+        if (_forward)
+        {
+            wallJumpForce = transform.up * upForce + wallNormal * (sideForce + forwardForce);
+        }
+        else
+        {
+            wallJumpForce = transform.up * upForce + wallNormal * sideForce + _cameraController.CameraForward() * forwardForce;
+        }
+        
 
         Vector3 currentVelocity = _rgBody.velocity;
         _rgBody.velocity = new Vector3(currentVelocity.x, 0, currentVelocity.z);
@@ -93,7 +103,7 @@ public class WallRunning : MonoBehaviour
     
     private void JumpInput()
     {
-        WallJump(_wallJumpUpForce, _wallJumpSideForce);   
+        WallJump(_wallJumpUpForce, _wallJumpSideForce, _wallJumpForwardForce);   
     }
     
     private void CheckForWall()
@@ -105,6 +115,9 @@ public class WallRunning : MonoBehaviour
 
     private void CheckState()
     {
+        //Wait for jump delay before initiating wall run
+        if(!_playerController.CanJump) return;
+        
         //Has hit wall and is in air
         if((_left || _right) && _movementInput.magnitude > 0 && !_playerController.IsGrounded && !_exitingWall)
         {
@@ -113,11 +126,14 @@ public class WallRunning : MonoBehaviour
                 _playerController.IsWallRunning = true;
                 _wallRunTimer = 0;
                 _cameraController.ChangeFOV(CameraFOV.WALLRUNNING);
+                
+                if(_right) _cameraController.ChangeTilt(CameraTilt.RIGHT);
+                if(_left) _cameraController.ChangeTilt(CameraTilt.LEFT);
             }
 
             WallRun();
             
-            _rgBody.AddForce(Vector3.down * _wallRunGravity * _rgBody.mass);
+            _rgBody.AddForce(Vector3.down * (_wallRunGravity * _rgBody.mass));
             
             if (_wallRunTimer < _wallRunTime)
             {
@@ -126,7 +142,7 @@ public class WallRunning : MonoBehaviour
             
             if (_wallRunTimer >= _wallRunTime && _playerController.IsWallRunning)
             {
-                WallJump(_wallExitUpForce, _wallExitSideForce);
+                WallJump(_wallExitUpForce, _wallExitSideForce, 0);
                 _exitingWall = true;
                 _wallRunTimer = 0;
             }
@@ -140,7 +156,7 @@ public class WallRunning : MonoBehaviour
         if (_exitingWall)
         {
             _playerController.IsWallRunning = false;
-
+            
             if (!_playerController.IsSprinting)
             {
                 _cameraController.ChangeFOV(CameraFOV.NEUTRAL);
@@ -172,12 +188,12 @@ public class WallRunning : MonoBehaviour
         else if (_right)
         {
             wallNormal = _wallRightHit.normal;
-            _cameraController.ChangeTilt(CameraTilt.RIGHT);
+            //_cameraController.ChangeTilt(CameraTilt.RIGHT);
         }
         else
         {
             wallNormal = _wallLeftHit.normal;
-            _cameraController.ChangeTilt(CameraTilt.LEFT);
+            //_cameraController.ChangeTilt(CameraTilt.LEFT);
         }
         
         Vector3 wallForward = Vector3.Cross(wallNormal, transform.up);
@@ -201,8 +217,8 @@ public class WallRunning : MonoBehaviour
         }
         
         //If Player isn't trying to get away from wall. (Jumps)
-       
-        _rgBody.AddForce(-wallNormal * (100 * _rgBody.mass) , ForceMode.Force);
+        Vector3 wallStickForce = -wallNormal * (75 * _rgBody.mass);
+        _rgBody.AddForce(wallStickForce, ForceMode.Force);
         
         _playerController.ApplyForce(wallForward, _wallRunSpeed);
     }
