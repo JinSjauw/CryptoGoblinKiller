@@ -336,24 +336,12 @@ public class PlayerController : MonoBehaviour
         {
             desiredSpeed = maxMoveSpeed;
         }
-
-        /*if (_isSwinging)
-        {
-            desiredSpeed = _maxSwingingSpeed;
-        }*/
         
         Vector3 desiredVelocity = targetDirection * desiredSpeed;
-        
-        /*if (_isWallRunning)
-        {
-            desiredVelocity = CollideAndSlide(desiredVelocity, transform.position, 0);
-        }*/
         
         _currentVelocity = Vector3.MoveTowards(_currentVelocity, desiredVelocity, desiredAcceleration * Time.fixedDeltaTime);
         
         Vector3 neededAcceleration = (_currentVelocity - _rgBody.velocity) / Time.fixedDeltaTime;
-        
-        
         
         float maxAcceleration = _maxAcceleration * _maxAccelerationFactor.Evaluate(velocityDot);
         neededAcceleration = Vector3.ClampMagnitude(neededAcceleration, maxAcceleration);
@@ -365,9 +353,8 @@ public class PlayerController : MonoBehaviour
             force *= _maxInAirAcceleration;
         }
         
-        //Do a collide and slide call
-        
-        if (_isWallRunning && Physics.Raycast(transform.position, _currentVelocity.normalized, out RaycastHit hit, 2f, LayerMask.GetMask("Wall")))
+        //Do a collide and slide when wallrunning
+        if (_isWallRunning && Physics.Raycast(transform.position, _currentVelocity.normalized, out RaycastHit hit, 1.5f, LayerMask.GetMask("Wall")))
         {
             Vector3 snapToSurface = unitVelocity * (hit.distance);
             Vector3 leftover = _currentVelocity - snapToSurface;
@@ -380,13 +367,9 @@ public class PlayerController : MonoBehaviour
             _currentVelocity = _rgBody.velocity;
             
             return;
-            
-            //return snapToSurface + CollideAndSlide(leftover, position + snapToSurface, depth + 1);
-            //neededAcceleration = ((snapToSurface + leftover) - _rgBody.velocity) / Time.fixedDeltaTime;
         }
         
         _rgBody.AddForce(force);
-        
         _currentVelocity = _rgBody.velocity;
     }
     

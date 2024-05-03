@@ -1,5 +1,6 @@
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class GrapplingHook : MonoBehaviour
 {
@@ -26,8 +27,19 @@ public class GrapplingHook : MonoBehaviour
     
     [Header("Rope Animation")]
     [SerializeField] private AnimationCurve _ropeVelocityCurve;
-    [SerializeField] private float _ropeTravelTime;
-
+    [FormerlySerializedAs("_ropeTravelTime")] [SerializeField] private float _ropeTravelSpeed;
+    [SerializeField] private int _ropeQuality;
+    [SerializeField] private float _ropeInitialHeight;
+    [SerializeField] private int _ropeHeightStart;
+    [SerializeField] private float _ropeWaveFrequency;
+    [SerializeField] private float _ropeAnimationDamper;
+    [SerializeField] private AnimationCurve _ropeAffectCurve;
+    
+    //Spring Data
+    private SpringUtils.SpringMotionParams _ropeAnimationSpring;
+    private float _ropeVelocity;
+    private float _ropePosition;
+    
     //Private Component Refs
     private PlayerController _playerController;
     private CameraController _cameraController;
@@ -59,6 +71,8 @@ public class GrapplingHook : MonoBehaviour
         _rgBody = GetComponent<Rigidbody>();
         
         _grappleLayer = LayerMask.GetMask("Wall");
+
+        _ropeAnimationSpring = new SpringUtils.SpringMotionParams();
     }
 
     // Start is called before the first frame update
@@ -145,7 +159,9 @@ public class GrapplingHook : MonoBehaviour
             _swingJoint.damper = _ropeDamper;
             _swingJoint.massScale = _ropeMass;
             
-            _lineRenderer.positionCount = 2;
+            //_lineRenderer.positionCount = 2;
+            _lineRenderer.positionCount = _ropeQuality + 1;
+            _ropePosition = _ropeInitialHeight;
             
             _playerController.IsSwinging = true;
         }
@@ -179,6 +195,7 @@ public class GrapplingHook : MonoBehaviour
         _playerController.IsSwinging = false;
         _swingingTimer = 0; 
         _ropeCutoffTimer = 0;
+        //_ropePosition = 0;
         Destroy(_swingJoint);
     }
     
@@ -186,11 +203,32 @@ public class GrapplingHook : MonoBehaviour
     {
         if(!_swingJoint) return;
         
-        _ropeAlpha = Mathf.MoveTowards(_ropeAlpha, 1, 1 / _ropeTravelTime * Time.deltaTime);
-        _currentGrapplePosition = Vector3.Lerp(_grappleTransform.position, _swingAnchorPoint, _ropeVelocityCurve.Evaluate(_ropeAlpha));
         
-        _lineRenderer.SetPosition(0, _grappleTransform.position);
-        _lineRenderer.SetPosition(1, _currentGrapplePosition);
+        /*if (_lineRenderer.positionCount == 0)
+        {
+            _lineRenderer.positionCount = _ropeQuality + 1;
+        }*/
+        
+        Vector3 ropeUp = Quaternion.LookRotation((_swingAnchorPoint - _grappleTransform.position).normalized) * Vector3.up;
+        
+        _ropeAlpha = Mathf.MoveTowards(_ropeAlpha, 1f, _ropeTravelSpeed * Time.deltaTime);
+        _currentGrapplePosition = Vector3.Lerp(_grappleTransform.position, _swingAnchorPoint, _ropeAlpha);
+        
+        SpringUtils.CalcDampedSpringMotionParams(_ropeAnimationSpring, Time.deltaTime, _ropeWaveFrequency, _ropeAnimationDamper);
+        
+        for (int i = 0; i < _ropeQuality + 1; i++)
+        {
+            float delta = i / (float)_ropeQuality;
+            //Vector3 offset = ropeUp * SpringUtils.UpdateDampedSpringMotion()
+            
+            SpringUtils.UpdateDampedSpringMotion(ref _ropePosition, ref _ropeVelocity, 0f, _ropeAnimationSpring);
+            _lineRenderer.SetPosition(i, Vector3.Lerp(_grappleTransform.position, _currentGrapplePosition, delta) + ropeUp * (_ropePosition * _ropeAffectCurve.Evaluate(delta)));
+        }
+
+        //Debug.Log(_ropePosition);
+        
+        /*_lineRenderer.SetPosition(0, _grappleTransform.position);
+        _lineRenderer.SetPosition(1, _currentGrapplePosition);*/
     }
     
     #endregion

@@ -217,7 +217,7 @@ public class WallRunning : MonoBehaviour
         }
         
         //If Player isn't trying to get away from wall. (Jumps)
-        Vector3 wallStickForce = -wallNormal * (75 * _rgBody.mass);
+        Vector3 wallStickForce = -wallNormal * (100 * _rgBody.mass);
         _rgBody.AddForce(wallStickForce, ForceMode.Force);
         
         _playerController.ApplyForce(wallForward, _wallRunSpeed);
