@@ -34,8 +34,8 @@ public class CameraController : MonoBehaviour
     private float _tiltSpringFrequency;
     private float _tiltDampRatio;
     
-    private CameraTilt _tiltState;
-    private CameraTilt _lastTiltState;
+    private TiltState _tiltState;
+    private TiltState _lastTiltStateState;
     
     private float _tiltDelta;
     private float _lastTiltDelta;
@@ -108,6 +108,9 @@ public class CameraController : MonoBehaviour
         //Debug.Log(value);
         _playerCamera.transform.localRotation = Quaternion.Euler(0, 0, value);
     }
+
+
+    #region Public Functions
     
     public void ChangeFOV(CameraFOV fovState)
     {
@@ -131,7 +134,7 @@ public class CameraController : MonoBehaviour
         }
     }
 
-    public void ChangeTilt(CameraTilt tiltState, SpringData spring, float tilt = 0)
+    public void ChangeTilt(TiltState tiltState, SpringData spring, float tilt = 0)
     {
         //if (_isChangingTilt) return;
         
@@ -142,13 +145,13 @@ public class CameraController : MonoBehaviour
         
         switch (tiltState)
         {
-            case CameraTilt.NEUTRAL:
+            case TiltState.NEUTRAL:
                 _targetTilt = 0;
                 break;
-            case CameraTilt.RIGHT:
+            case TiltState.RIGHT:
                 _targetTilt = tilt;
                 break;
-            case CameraTilt.LEFT:
+            case TiltState.LEFT:
                 _targetTilt = -tilt;
                 break;
         }
@@ -168,6 +171,13 @@ public class CameraController : MonoBehaviour
     {
         return _playerCamera.transform.forward;
     }
+
+    public float CameraZTilt()
+    {
+        return _playerCamera.transform.localEulerAngles.z;
+    }
+    
+    #endregion
 }
 
 public enum CameraFOV
@@ -177,7 +187,7 @@ public enum CameraFOV
     WALLRUNNING = 2,
 }
 
-public enum CameraTilt
+public enum TiltState
 {
     NEUTRAL = 0,
     RIGHT = 1,

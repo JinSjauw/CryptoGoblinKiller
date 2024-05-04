@@ -10,6 +10,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private InputHandler _inputHandler;
     [SerializeField] private Transform _cameraAnchor;
     [SerializeField] private CameraController _cameraController;
+    [SerializeField] private WeaponController _weaponController;
     [SerializeField] private TextMeshProUGUI _speedText;
     
     [Header("General Physics")] 
@@ -107,12 +108,12 @@ public class PlayerController : MonoBehaviour
         //Get Component Refs
         _rgBody = GetComponent<Rigidbody>();
         _bodyMass = _rgBody.mass;
+        
+        //_weaponController.SetCamera(_cameraController);
     }
 
     void Start()
     {
-        //Subscribe to all the relevant events
-        
         _inputHandler.MoveEvent += Move;
         _inputHandler.JumpEvent += Jump;
         _inputHandler.SprintEvent += Sprint;
@@ -158,8 +159,13 @@ public class PlayerController : MonoBehaviour
 
     private void LateUpdate()
     {
-        _cameraController.transform.position = _cameraAnchor.position;
+        Vector3 anchorPosition = _cameraAnchor.position;
+        
+        _cameraController.transform.position = anchorPosition;
         _cameraController.RotateCamera(_horizontalRotation, _verticalRotation);
+
+        _weaponController.FollowAnchor(anchorPosition);
+        _weaponController.RotateWeaponHolder(_horizontalRotation, _verticalRotation);
     }
 
     #endregion
@@ -229,15 +235,18 @@ public class PlayerController : MonoBehaviour
         //Checking input is moving to the left or right
         if (x > .71f)
         {
-            _cameraController.ChangeTilt(CameraTilt.LEFT, _tiltSpring, _tiltAmount );
+            _cameraController.ChangeTilt(TiltState.LEFT, _tiltSpring, _tiltAmount );
+            _weaponController.ChangeTilt(TiltState.LEFT, _tiltSpring, _tiltAmount);
         }
         else if (x < -.71f)
         {
-            _cameraController.ChangeTilt(CameraTilt.RIGHT, _tiltSpring, _tiltAmount);
+            _cameraController.ChangeTilt(TiltState.RIGHT, _tiltSpring, _tiltAmount);
+            _weaponController.ChangeTilt(TiltState.RIGHT, _tiltSpring, _tiltAmount);
         }
         else
         {
-            _cameraController.ChangeTilt(CameraTilt.NEUTRAL, _tiltSpring);    
+            _cameraController.ChangeTilt(TiltState.NEUTRAL, _tiltSpring);    
+            _weaponController.ChangeTilt(TiltState.NEUTRAL, _tiltSpring);
         }
     }
     
@@ -251,7 +260,7 @@ public class PlayerController : MonoBehaviour
         
         HandleCameraTilt(movementInput.x);
         
-        Log("Movement: " + movementInput);
+        //Log("Movement: " + movementInput);
         
         Vector3 targetDirection = new Vector3(movementInput.x, 0, movementInput.y);
         targetDirection = transform.TransformDirection(targetDirection);

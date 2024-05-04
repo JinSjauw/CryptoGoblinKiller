@@ -122,8 +122,8 @@ public class WallRunning : MonoBehaviour
                 _wallRunTimer = 0;
                 _cameraController.ChangeFOV(CameraFOV.WALLRUNNING);
                 
-                if(_right) _cameraController.ChangeTilt(CameraTilt.RIGHT, _tiltSpring, _tiltAmount);
-                if(_left) _cameraController.ChangeTilt(CameraTilt.LEFT, _tiltSpring, _tiltAmount);
+                if(_right) _cameraController.ChangeTilt(TiltState.RIGHT, _tiltSpring, _tiltAmount);
+                if(_left) _cameraController.ChangeTilt(TiltState.LEFT, _tiltSpring, _tiltAmount);
             }
 
             WallRun();
@@ -157,7 +157,7 @@ public class WallRunning : MonoBehaviour
                 _cameraController.ChangeFOV(CameraFOV.NEUTRAL);
             }
             
-            _cameraController.ChangeTilt(CameraTilt.NEUTRAL, _tiltSpring);
+            _cameraController.ChangeTilt(TiltState.NEUTRAL, _tiltSpring);
             
             _wallExitTimer += Time.fixedDeltaTime;
             
