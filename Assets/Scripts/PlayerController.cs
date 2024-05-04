@@ -16,11 +16,15 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float _gravity;
     
     [Header("Leg Spring")] 
-    [SerializeField] private Transform _rideLineEnd;
+    //[SerializeField] private Transform _rideLineEnd;
     [SerializeField] private float _rideHeight;
     [SerializeField] private float _springPower;
     [SerializeField] private float _dampPower;
 
+    [Header("Camera Tilt Spring")] 
+    [SerializeField] private float _tiltAmount;
+    [SerializeField] private SpringData _tiltSpring;
+    
     [Header("Jump")] 
     [SerializeField] private bool _canDoubleJump;
     [SerializeField] private float _jumpDelay;
@@ -43,9 +47,6 @@ public class PlayerController : MonoBehaviour
     
     //Private Component Refs
     private Rigidbody _rgBody;
-    
-    //Player state
-    //private PlayerState _state;
     
     //Private Flags
     private bool _isGrounded;
@@ -83,7 +84,6 @@ public class PlayerController : MonoBehaviour
     
     //Input Variables
     private Vector2 _movementInput;
-    private Vector2 _lastMovementInput;
     private Vector2 _mouseInput;
     
     //Player transform
@@ -168,7 +168,7 @@ public class PlayerController : MonoBehaviour
 
     private void ApplyGravity()
     {
-        _rgBody.AddForce(Vector3.down * _gravity * _bodyMass);
+        _rgBody.AddForce(Vector3.down * (_gravity * _bodyMass));
     }
 
     private bool RaycastUnderPlayer(float distance,LayerMask layerToCheck, out RaycastHit hit)
@@ -222,11 +222,25 @@ public class PlayerController : MonoBehaviour
             
             _rgBody.AddForce(rayDirection * springForce);
         }
-        
-        //Debug sphere
-        _rideLineEnd.localPosition = new Vector3(0, -_rideHeight, 0);
     }
 
+    private void HandleCameraTilt(float x)
+    {
+        //Checking input is moving to the left or right
+        if (x > .71f)
+        {
+            _cameraController.ChangeTilt(CameraTilt.LEFT, _tiltSpring, _tiltAmount );
+        }
+        else if (x < -.71f)
+        {
+            _cameraController.ChangeTilt(CameraTilt.RIGHT, _tiltSpring, _tiltAmount);
+        }
+        else
+        {
+            _cameraController.ChangeTilt(CameraTilt.NEUTRAL, _tiltSpring);    
+        }
+    }
+    
     private void HandleMove(Vector2 movementInput)
     {
         //Need to check if it is x or y that is 0 then use 
@@ -234,12 +248,10 @@ public class PlayerController : MonoBehaviour
         {
             return;
         }
-
-        if (_movementInput.magnitude <= 0)
-        {
-            //return;
-            _lastMovementInput = _movementInput;
-        }
+        
+        HandleCameraTilt(movementInput.x);
+        
+        Log("Movement: " + movementInput);
         
         Vector3 targetDirection = new Vector3(movementInput.x, 0, movementInput.y);
         targetDirection = transform.TransformDirection(targetDirection);
@@ -358,11 +370,11 @@ public class PlayerController : MonoBehaviour
         {
             Vector3 snapToSurface = unitVelocity * (hit.distance);
             Vector3 leftover = _currentVelocity - snapToSurface;
-
+            
             float magnitude = leftover.magnitude;
             leftover = Vector3.ProjectOnPlane(leftover, hit.normal).normalized;
             leftover *= magnitude;
-
+            
             _rgBody.velocity = leftover;
             _currentVelocity = _rgBody.velocity;
             

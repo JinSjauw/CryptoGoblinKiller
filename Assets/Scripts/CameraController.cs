@@ -13,13 +13,10 @@ public class CameraController : MonoBehaviour
     [Header("FOV Spring Variables")] 
     [SerializeField] private float _fovSpringFrequency;
     [SerializeField] private float _fovDampingRatio;
-
-    [Header("Camera Tilt")] 
-    [SerializeField] private float _tiltAmount;
     
-    [Header("Tilt Spring Variables")] 
+    /*[Header("Tilt Spring Variables")] 
     [SerializeField] private float _tiltSpringFrequency;
-    [SerializeField] private float _tiltDampRatio;
+    [SerializeField] private float _tiltDampRatio;*/
     
     private Camera _playerCamera;
     
@@ -34,7 +31,12 @@ public class CameraController : MonoBehaviour
     
     //Camera Tilt
     private SpringUtils.SpringMotionParams _springParamsTilt;
+    private float _tiltSpringFrequency;
+    private float _tiltDampRatio;
+    
     private CameraTilt _tiltState;
+    private CameraTilt _lastTiltState;
+    
     private float _tiltDelta;
     private float _lastTiltDelta;
 
@@ -85,7 +87,7 @@ public class CameraController : MonoBehaviour
             SpringUtils.CalcDampedSpringMotionParams(_springParamsTilt, Time.deltaTime, _tiltSpringFrequency, _tiltDampRatio);
             SpringUtils.UpdateDampedSpringMotion(ref _currentTilt, ref _tiltDelta, _targetTilt, _springParamsTilt);
 
-            if (Mathf.Abs(_tiltDelta - _lastTiltDelta) <= 0.001)
+            if (Mathf.Abs(_tiltDelta - _lastTiltDelta) <= 0)
             {
                 _isChangingTilt = false;
                 _currentTilt = _targetTilt;
@@ -107,16 +109,15 @@ public class CameraController : MonoBehaviour
         _playerCamera.transform.localRotation = Quaternion.Euler(0, 0, value);
     }
     
-    public void ChangeFOV(CameraFOV fov)
+    public void ChangeFOV(CameraFOV fovState)
     {
-        if(_fovState == fov) return;
-
-        _fovState = fov;
+        //if(_isChangingFOV) return;
         
+        if(_fovState == fovState) return;
+        _fovState = fovState;
         _isChangingFOV = true;
-        //SpringUtils.CalcDampedSpringMotionParams(_springParamsFOV, Time.deltaTime, _fovSpringFrequency, _fovDampingRatio);
         
-        switch (fov)
+        switch (fovState)
         {
             case CameraFOV.NEUTRAL:
                 _targetFOV = _normalFOV;
@@ -130,27 +131,30 @@ public class CameraController : MonoBehaviour
         }
     }
 
-    public void ChangeTilt(CameraTilt tilt)
+    public void ChangeTilt(CameraTilt tiltState, SpringData spring, float tilt = 0)
     {
-        //if(_isChangingTilt) return;
-        if(_tiltState == tilt) return;
-        _tiltState = tilt;
-        //Debug.Log("Changing tilt to:" + _tiltState );
+        //if (_isChangingTilt) return;
+        
+        if(_tiltState == tiltState) return;
+        _tiltState = tiltState;
         
         _isChangingTilt = true;
         
-        switch (tilt)
+        switch (tiltState)
         {
             case CameraTilt.NEUTRAL:
                 _targetTilt = 0;
                 break;
             case CameraTilt.RIGHT:
-                _targetTilt = _tiltAmount;
+                _targetTilt = tilt;
                 break;
             case CameraTilt.LEFT:
-                _targetTilt = -_tiltAmount;
+                _targetTilt = -tilt;
                 break;
         }
+
+        _tiltSpringFrequency = spring.frequency;
+        _tiltDampRatio = spring.dampingRatio;
     }
     
     public void RotateCamera(float horizontal, float vertical)

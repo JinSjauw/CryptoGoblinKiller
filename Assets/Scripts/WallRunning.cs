@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 [RequireComponent(typeof(PlayerController))]
 public class WallRunning : MonoBehaviour
@@ -27,6 +28,10 @@ public class WallRunning : MonoBehaviour
     [SerializeField] private float _wallExitUpForce;
     [SerializeField] private float _wallExitSideForce;
     
+    [Header("Wall Run Camera Tilt")] 
+    [SerializeField] private float _tiltAmount;
+    [SerializeField] private SpringData _tiltSpring;
+    
     private float _wallExitTimer;
     private float _wallRunTimer;
 
@@ -36,7 +41,6 @@ public class WallRunning : MonoBehaviour
 
     private bool _right;
     private bool _left;
-    private bool _forward;
     private bool _exitingWall;
     
     private Vector2 _movementInput;
@@ -81,16 +85,8 @@ public class WallRunning : MonoBehaviour
         Vector3 wallNormal = _right ? _wallRightHit.normal : _wallLeftHit.normal;
         Vector3 wallJumpForce;
         
-        if (_forward)
-        {
-            wallJumpForce = transform.up * upForce + wallNormal * (sideForce + forwardForce);
-        }
-        else
-        {
-            wallJumpForce = transform.up * upForce + wallNormal * sideForce + _cameraController.CameraForward() * forwardForce;
-        }
+        wallJumpForce = transform.up * upForce + wallNormal * sideForce + _cameraController.CameraForward() * forwardForce;
         
-
         Vector3 currentVelocity = _rgBody.velocity;
         _rgBody.velocity = new Vector3(currentVelocity.x, 0, currentVelocity.z);
         _rgBody.AddForce(wallJumpForce * _rgBody.mass, ForceMode.Impulse);
@@ -110,7 +106,6 @@ public class WallRunning : MonoBehaviour
     {
         _right = Physics.Raycast(transform.position, transform.right, out _wallRightHit, _wallCheckDistance, _wallMask);
         _left = Physics.Raycast(transform.position, -transform.right, out _wallLeftHit, _wallCheckDistance, _wallMask);
-        _forward = Physics.Raycast(transform.position, transform.forward, out _wallForwardHit, _wallForwardCheckDistance, _wallMask);
     }
 
     private void CheckState()
@@ -127,8 +122,8 @@ public class WallRunning : MonoBehaviour
                 _wallRunTimer = 0;
                 _cameraController.ChangeFOV(CameraFOV.WALLRUNNING);
                 
-                if(_right) _cameraController.ChangeTilt(CameraTilt.RIGHT);
-                if(_left) _cameraController.ChangeTilt(CameraTilt.LEFT);
+                if(_right) _cameraController.ChangeTilt(CameraTilt.RIGHT, _tiltSpring, _tiltAmount);
+                if(_left) _cameraController.ChangeTilt(CameraTilt.LEFT, _tiltSpring, _tiltAmount);
             }
 
             WallRun();
@@ -150,7 +145,7 @@ public class WallRunning : MonoBehaviour
         else
         {
             _playerController.IsWallRunning = false;
-            _cameraController.ChangeTilt(CameraTilt.NEUTRAL);
+            //_cameraController.ChangeTilt(CameraTilt.NEUTRAL);
         }
 
         if (_exitingWall)
@@ -162,7 +157,7 @@ public class WallRunning : MonoBehaviour
                 _cameraController.ChangeFOV(CameraFOV.NEUTRAL);
             }
             
-            _cameraController.ChangeTilt(CameraTilt.NEUTRAL);
+            _cameraController.ChangeTilt(CameraTilt.NEUTRAL, _tiltSpring);
             
             _wallExitTimer += Time.fixedDeltaTime;
             
@@ -180,21 +175,8 @@ public class WallRunning : MonoBehaviour
         _rgBody.velocity = new Vector3(currentVelocity.x, 0, currentVelocity.z);
 
         Vector3 wallNormal;
-
-        if (_forward && (_right || _left))
-        {
-            wallNormal = _wallForwardHit.normal;
-        }
-        else if (_right)
-        {
-            wallNormal = _wallRightHit.normal;
-            //_cameraController.ChangeTilt(CameraTilt.RIGHT);
-        }
-        else
-        {
-            wallNormal = _wallLeftHit.normal;
-            //_cameraController.ChangeTilt(CameraTilt.LEFT);
-        }
+        
+        wallNormal = _right ? _wallRightHit.normal : _wallLeftHit.normal;
         
         Vector3 wallForward = Vector3.Cross(wallNormal, transform.up);
 

@@ -5628,10 +5628,13 @@ MonoBehaviour:
   _cameraController: {fileID: 1565596348}
   _speedText: {fileID: 13873576}
   _gravity: 60
-  _rideLineEnd: {fileID: 553131158}
   _rideHeight: 2
   _springPower: 200
   _dampPower: 12
+  _tiltAmount: 5
+  _tiltSpring:
+    frequency: 20
+    dampingRatio: 0.85
   _canDoubleJump: 0
   _jumpDelay: 0.2
   _jumpPower: 20
@@ -5764,6 +5767,10 @@ MonoBehaviour:
   _WallExitTime: 0.2
   _wallExitUpForce: 8
   _wallExitSideForce: 10
+  _tiltAmount: 15
+  _tiltSpring:
+    frequency: 30
+    dampingRatio: 0.75
 --- !u!114 &584710346
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5812,58 +5819,77 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  _ropeTravelSpeed: 8
-  _ropeQuality: 12
-  _ropeInitialHeight: 1
-  _ropeWaveFrequency: 5.8
-  _ropeAnimationDamper: 0.2
+  _ropeTravelSpeed: 5.5
+  _ropeQuality: 30
+  _ropeInitialHeight: 4
+  _ropeHeightStart: 3
+  _ropeWaveFrequency: 2
+  _ropeAnimationDamper: 0.16
   _ropeAffectCurve:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
-      time: 0.0028818445
-      value: 0.0070754886
-      inSlope: 13.353238
-      outSlope: 13.353238
+      time: 0.0028735395
+      value: -0.00070917606
+      inSlope: 0.05924436
+      outSlope: 0.05924436
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
-      outWeight: 0.05069953
+      outWeight: 0.2979752
     - serializedVersion: 3
-      time: 0.17291552
-      value: 0.9914417
-      inSlope: -0.015344166
-      outSlope: -0.015344166
+      time: 0.04266107
+      value: 0.0018197102
+      inSlope: 0.028214112
+      outSlope: 0.028214112
       tangentMode: 0
       weightedMode: 0
       inWeight: 0.33333334
-      outWeight: 0.1289527
+      outWeight: 0.5697984
     - serializedVersion: 3
-      time: 0.39480597
-      value: 0.103829585
-      inSlope: -1.1868601
-      outSlope: -1.1868601
+      time: 0.2544
+      value: 0.3475499
+      inSlope: 0.010632968
+      outSlope: 0.010632968
       tangentMode: 0
       weightedMode: 0
       inWeight: 0.33333334
-      outWeight: 0.4779835
+      outWeight: 0.26530617
     - serializedVersion: 3
-      time: 0.4912518
-      value: 0.023281533
-      inSlope: -0.22441137
-      outSlope: -0.22441137
+      time: 0.49856186
+      value: -0.2703614
+      inSlope: 0.053629246
+      outSlope: 0.053629246
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0.6563327
-      outWeight: 0.13663706
+      inWeight: 0.33333334
+      outWeight: 0.5504886
     - serializedVersion: 3
-      time: 1
-      value: 0.009433746
-      inSlope: 0.030670997
-      outSlope: 0.030670997
+      time: 0.68338794
+      value: 0.12580654
+      inSlope: 0.007069427
+      outSlope: 0.007069427
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0.13985625
+      inWeight: 0.33333334
+      outWeight: 0.62499475
+    - serializedVersion: 3
+      time: 0.7852045
+      value: -0.025714075
+      inSlope: -0.029195638
+      outSlope: -0.029195638
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.19735411
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.99281615
+      value: -0.00070917606
+      inSlope: 0.03094755
+      outSlope: 0.03094755
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.2774795
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
@@ -15073,9 +15099,6 @@ MonoBehaviour:
   _wallRunFOV: 75
   _fovSpringFrequency: 17
   _fovDampingRatio: 0.8
-  _tiltAmount: 15
-  _tiltSpringFrequency: 30
-  _tiltDampRatio: 0.75
 --- !u!1 &1649320456
 GameObject:
   m_ObjectHideFlags: 0

@@ -195,19 +195,12 @@ public class GrapplingHook : MonoBehaviour
         _playerController.IsSwinging = false;
         _swingingTimer = 0; 
         _ropeCutoffTimer = 0;
-        //_ropePosition = 0;
         Destroy(_swingJoint);
     }
     
     private void DrawRope()
     {
         if(!_swingJoint) return;
-        
-        
-        /*if (_lineRenderer.positionCount == 0)
-        {
-            _lineRenderer.positionCount = _ropeQuality + 1;
-        }*/
         
         Vector3 ropeUp = Quaternion.LookRotation((_swingAnchorPoint - _grappleTransform.position).normalized) * Vector3.up;
         
@@ -219,16 +212,10 @@ public class GrapplingHook : MonoBehaviour
         for (int i = 0; i < _ropeQuality + 1; i++)
         {
             float delta = i / (float)_ropeQuality;
-            //Vector3 offset = ropeUp * SpringUtils.UpdateDampedSpringMotion()
             
             SpringUtils.UpdateDampedSpringMotion(ref _ropePosition, ref _ropeVelocity, 0f, _ropeAnimationSpring);
             _lineRenderer.SetPosition(i, Vector3.Lerp(_grappleTransform.position, _currentGrapplePosition, delta) + ropeUp * (_ropePosition * _ropeAffectCurve.Evaluate(delta)));
         }
-
-        //Debug.Log(_ropePosition);
-        
-        /*_lineRenderer.SetPosition(0, _grappleTransform.position);
-        _lineRenderer.SetPosition(1, _currentGrapplePosition);*/
     }
     
     #endregion
