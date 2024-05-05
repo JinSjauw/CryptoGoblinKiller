@@ -14500,7 +14500,7 @@ Transform:
   m_GameObject: {fileID: 1490776717}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 0.03137816, z: -0, w: 0.9995076}
-  m_LocalPosition: {x: 0.259, y: -0.408, z: 0.452}
+  m_LocalPosition: {x: 0.259, y: -0.367, z: -0.25}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -14527,11 +14527,11 @@ MonoBehaviour:
   _rotationStep: 0.2
   _maxRotationStep: 1.5
   _bobOffset: 1
-  _speedModifier: 0.45
-  _travelLimit: {x: 0.035, y: 0.01, z: 0.005}
-  _bobLimit: {x: 0.001, y: 0.001, z: 0.001}
+  _speedModifier: 0.4
+  _travelLimit: {x: 0.03, y: 0.02, z: 0.03}
+  _bobLimit: {x: 0.01, y: 0.01, z: 0.01}
   _bobRotation: 1
-  _bobMultiplier: {x: 1.5, y: 2.5, z: 2}
+  _bobMultiplier: {x: 1, y: 1.5, z: 4}
 --- !u!1 &1509677537
 GameObject:
   m_ObjectHideFlags: 0
@@ -24831,7 +24831,7 @@ Transform:
   m_GameObject: {fileID: 9005504385891069446}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.326, y: -0.112, z: -0.586}
+  m_LocalPosition: {x: -0.368, y: -0.176, z: 0.082}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

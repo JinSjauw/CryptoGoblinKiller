@@ -99,7 +99,7 @@ public class WeaponSway : MonoBehaviour
 
     private void BobOffset()
     {
-        _speedCurve += Time.deltaTime * (_playerController.IsGrounded ? _velocity.magnitude : 1) + 0.01f;
+        _speedCurve += Time.deltaTime * (_playerController.IsGrounded ? _velocity.magnitude : 1 * _speedModifier) + 0.01f;
 
         if (_speedCurve > 100) _speedCurve = 0;
 
