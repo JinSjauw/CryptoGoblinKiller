@@ -17,11 +17,10 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float _gravity;
     
     [Header("Leg Spring")] 
-    //[SerializeField] private Transform _rideLineEnd;
     [SerializeField] private float _rideHeight;
     [SerializeField] private float _springPower;
     [SerializeField] private float _dampPower;
-
+    
     [Header("Camera Tilt Spring")] 
     [SerializeField] private float _tiltAmount;
     [SerializeField] private SpringData _tiltSpring;
@@ -45,6 +44,7 @@ public class PlayerController : MonoBehaviour
     [Header("Mouse Sensitivity")]
     [SerializeField] private float _horizontalSensitivity;
     [SerializeField] private float _verticalSensitivity;
+    
     
     //Private Component Refs
     private Rigidbody _rgBody;
@@ -229,7 +229,7 @@ public class PlayerController : MonoBehaviour
             _rgBody.AddForce(rayDirection * springForce);
         }
     }
-
+    
     private void HandleCameraTilt(float x)
     {
         //Checking input is moving to the left or right
@@ -306,34 +306,6 @@ public class PlayerController : MonoBehaviour
     {
         _rgBody.MoveRotation(Quaternion.AngleAxis(_horizontalRotation, Vector3.up));
     }
-
-    private Vector3 CollideAndSlide(Vector3 velocity, Vector3 position, int depth)
-    {
-        if (depth >= 2)
-        {
-            return velocity;
-        }
-        
-        float distance = velocity.magnitude;
-
-        RaycastHit hit;
-        if (Physics.Raycast(position, transform.forward, out hit, 2f, LayerMask.GetMask("Wall")))
-        {
-            Vector3 snapToSurface = velocity.normalized * (hit.distance);
-            Vector3 leftover = velocity - snapToSurface;
-
-            float magnitude = leftover.magnitude;
-            leftover = Vector3.ProjectOnPlane(leftover, hit.normal).normalized;
-            leftover *= magnitude;
-
-            //_rgBody.velocity = leftover;
-            
-            return leftover;
-            //return snapToSurface + CollideAndSlide(leftover, position + snapToSurface, depth + 1);
-        }
-        
-        return velocity;
-    }
     
     private void Log(string msg, string funcName = "")
     {
@@ -344,6 +316,21 @@ public class PlayerController : MonoBehaviour
 
     #region Public Functions
 
+    public Vector2 GetMouseInput()
+    {
+        return _mouseInput;
+    }
+
+    public Vector3 GetCurrentVelocity()
+    {
+        return _rgBody.velocity;
+    }
+
+    public Vector2 GetMoveInput()
+    {
+        return _movementInput;
+    }
+    
     public void ApplyForce(Vector3 targetDirection, float maxMoveSpeed = 0)
     {
         Vector3 unitVelocity = _currentVelocity.normalized;

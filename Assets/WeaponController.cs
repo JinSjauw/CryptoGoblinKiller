@@ -53,9 +53,6 @@ public class WeaponController : MonoBehaviour
             
             _weaponHolder.localRotation = Quaternion.Euler(0, 0, _currentTilt);
             _lastWeaponTiltDelta = _weaponTiltDelta;
-
-            /*UpdateTilt(_currentTilt);
-            _lastTiltDelta = _tiltDelta;*/
         }
     }
 
