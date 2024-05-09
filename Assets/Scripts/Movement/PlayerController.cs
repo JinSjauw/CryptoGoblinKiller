@@ -2,6 +2,8 @@ using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Rendering.Universal;
+using UnityEngine.Serialization;
 
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerController : MonoBehaviour
@@ -10,7 +12,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private InputHandler _inputHandler;
     [SerializeField] private Transform _cameraAnchor;
     [SerializeField] private CameraController _cameraController;
-    [SerializeField] private WeaponController _weaponController;
+    [SerializeField] private WeaponTransformController weaponTransformController; // to be removed. will use events in the future
     [SerializeField] private TextMeshProUGUI _speedText;
     
     [Header("General Physics")] 
@@ -118,7 +120,7 @@ public class PlayerController : MonoBehaviour
         _inputHandler.JumpEvent += Jump;
         _inputHandler.SprintEvent += Sprint;
     }
-    
+
     void FixedUpdate()
     {
         _speedText.text = "Speed: " + _rgBody.velocity.magnitude + "\n" 
@@ -161,11 +163,13 @@ public class PlayerController : MonoBehaviour
     {
         Vector3 anchorPosition = _cameraAnchor.position;
         
+        //pass _horizontalRotation & _verticalRotation via events && have them follow the anchor themselves
+        
         _cameraController.transform.position = anchorPosition;
         _cameraController.RotateCamera(_horizontalRotation, _verticalRotation);
 
-        _weaponController.FollowAnchor(anchorPosition);
-        _weaponController.RotateWeaponHolder(_horizontalRotation, _verticalRotation);
+        weaponTransformController.FollowAnchor(anchorPosition);
+        weaponTransformController.RotateWeaponHolder(_horizontalRotation, _verticalRotation);
     }
 
     #endregion
@@ -236,17 +240,17 @@ public class PlayerController : MonoBehaviour
         if (x > .71f)
         {
             _cameraController.ChangeTilt(TiltState.LEFT, _tiltSpring, _tiltAmount );
-            _weaponController.ChangeTilt(TiltState.LEFT, _tiltSpring, _tiltAmount);
+            weaponTransformController.ChangeTilt(TiltState.LEFT, _tiltSpring, _tiltAmount);
         }
         else if (x < -.71f)
         {
             _cameraController.ChangeTilt(TiltState.RIGHT, _tiltSpring, _tiltAmount);
-            _weaponController.ChangeTilt(TiltState.RIGHT, _tiltSpring, _tiltAmount);
+            weaponTransformController.ChangeTilt(TiltState.RIGHT, _tiltSpring, _tiltAmount);
         }
         else
         {
             _cameraController.ChangeTilt(TiltState.NEUTRAL, _tiltSpring);    
-            _weaponController.ChangeTilt(TiltState.NEUTRAL, _tiltSpring);
+            weaponTransformController.ChangeTilt(TiltState.NEUTRAL, _tiltSpring);
         }
     }
     
@@ -416,6 +420,6 @@ public class PlayerController : MonoBehaviour
             _cameraController.ChangeFOV(CameraFOV.NEUTRAL);
         }
     }
-
+    
     #endregion
 }

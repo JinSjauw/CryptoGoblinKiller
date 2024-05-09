@@ -1,99 +1,44 @@
-using System;
+using Unity.Mathematics;
 using UnityEngine;
 
 public class WeaponController : MonoBehaviour
 {
-    [Header("Object Refs")]
-    [SerializeField] private Transform _weaponHolder;
-    [SerializeField] private SpringData _springData;
+    [SerializeField] private InputHandler _inputHandler;
+    [SerializeField] private Transform _bulletPrefab;
+    [SerializeField] private Rigidbody _playerBody;
+    [SerializeField] private CameraController _cameraController;
     
-    //private Component Refs
-    //private CameraController _cameraController;
     
-    //Spring
-    private SpringUtils.SpringMotionParams _springParams;
-
-    private TiltState _tiltState;
-    private bool _isChangingTilt;
-    private float _targetTilt;
-    private float _currentTilt;
-    private float _weaponTiltDelta;
-    private float _lastWeaponTiltDelta;
+    [SerializeField] private Transform _muzzlePosition;
+    [SerializeField] private float _projectileSpeed;
+    [SerializeField] private float _projectileDamage;
     
-    #region Unity Functions
-
-    private void Awake()
+    // Start is called before the first frame update
+    void Start()
     {
-        _springParams = new SpringUtils.SpringMotionParams();
+        _inputHandler.ShootEvent += Shoot;
     }
 
-    private void Update()
+    // Update is called once per frame
+    void Update()
     {
-        TiltWeapon();
+       
     }
 
-    #endregion
-    
-    #region Private Functions
-
-    private void TiltWeapon()
+    private void Shoot()
     {
-        if (_isChangingTilt)
+        HandleShoot();
+    }
+    
+    private void HandleShoot()
+    {
+        //Get direction to shoot in.
+        Vector3 direction = _cameraController.CrossHairRay().direction;
+        //Spawn bullet
+        Transform bulletObject = Instantiate(_bulletPrefab, _muzzlePosition.position, Quaternion.identity);
+        if (bulletObject.TryGetComponent(out Projectile bullet))
         {
-            SpringUtils.CalcDampedSpringMotionParams(_springParams, Time.deltaTime, _springData.frequency, _springData.dampingRatio);
-            SpringUtils.UpdateDampedSpringMotion(ref _currentTilt, ref _weaponTiltDelta, _targetTilt, _springParams);
-
-            if (Mathf.Abs(_weaponTiltDelta - _lastWeaponTiltDelta) <= 0)
-            {
-                //_isChangingTilt = false;
-                _currentTilt = _targetTilt;
-            }
-
-            //Debug.Log("tilt: " + _cameraTilt + " weapon tilt " + _currentTilt);
-            
-            _weaponHolder.localRotation = Quaternion.Euler(0, 0, _currentTilt);
-            _lastWeaponTiltDelta = _weaponTiltDelta;
+            bullet.Shoot(direction.normalized, _projectileSpeed, _projectileDamage);
         }
     }
-
-    #endregion
-    
-    #region Public Functions
-
-    public void ChangeTilt(TiltState tiltState, SpringData spring, float tilt = 0)
-    {
-        if(_tiltState == tiltState) return;
-        _tiltState = tiltState;
-        
-        _isChangingTilt = true;
-        
-        switch (tiltState)
-        {
-            case TiltState.NEUTRAL:
-                _targetTilt = 0;
-                break;
-            case TiltState.RIGHT:
-                _targetTilt = tilt;
-                break;
-            case TiltState.LEFT:
-                _targetTilt = -tilt;
-                break;
-        }
-
-        _springData = spring;
-    }
-    
-    public void RotateWeaponHolder(float horizontal, float vertical)
-    {
-        Vector3 rotationVector = transform.right * vertical + transform.up * horizontal;
-
-        _weaponHolder.localEulerAngles = new Vector3(rotationVector.x, rotationVector.y, _weaponHolder.localEulerAngles.z);
-    }
-
-    public void FollowAnchor(Vector3 position)
-    {
-        transform.position = position;
-    }
-
-    #endregion
 }

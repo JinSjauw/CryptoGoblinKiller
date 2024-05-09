@@ -1,9 +1,11 @@
+using System.Reflection;
 using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
     [Header("Component Refs")] 
     [SerializeField] private Transform _cameraHolder;
+    [SerializeField] private RectTransform _crossHair;
     
     [Header("Camera FOV")] 
     [SerializeField] private float _normalFOV;
@@ -172,9 +174,11 @@ public class CameraController : MonoBehaviour
         return _playerCamera.transform.forward;
     }
 
-    public float CameraZTilt()
+    public Ray CrossHairRay()
     {
-        return _playerCamera.transform.localEulerAngles.z;
+        Ray ray = _playerCamera.ScreenPointToRay(_crossHair.position);
+        //Debug.DrawRay(ray.origin, ray.direction * 45, Color.blue);
+        return ray;
     }
     
     #endregion

@@ -141,8 +141,7 @@ public class GrapplingHook : MonoBehaviour
         RaycastHit hit;
         //Have a separate object that would contain the actual grappling hook firing point & spring component;
         
-        if (Physics.Raycast(_cameraController.transform.position, _cameraController.CameraForward(), out hit,
-                _maxSwingDistance))
+        if (Physics.Raycast(_cameraController.CrossHairRay(), out hit, _maxSwingDistance))
         {
             _swingAnchorPoint = hit.point;
             _swingJoint = _grappleTransform.AddComponent<SpringJoint>();

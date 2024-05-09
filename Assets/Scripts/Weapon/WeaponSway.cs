@@ -4,6 +4,11 @@ public class WeaponSway : MonoBehaviour
 {
     [Header("Object Refs")]
     [SerializeField] private PlayerController _playerController;
+
+    [Header("Settings")] 
+    [SerializeField] private WeaponSwayData _data;
+    [SerializeField] private WeaponSwayData _moveSettings;
+    [SerializeField] private WeaponSwayData _idleSettings;
     
     [Header("Sway")] 
     [SerializeField] private bool _sway;
@@ -28,16 +33,17 @@ public class WeaponSway : MonoBehaviour
     [SerializeField] private Vector3 _bobMultiplier;
     private Vector3 _bobEulerRotation;
     
+    [Header("Smoothing")]
+    [SerializeField] private float smooth = 10f;
+    [SerializeField] private float smoothRot = 10f;
+    
     private float _speedCurve;
     private float _curveSin { get => Mathf.Sin(_speedCurve); }
     private float _curveCos { get => Mathf.Cos(_speedCurve); }
     private Vector3 _bobPosition;
     
-    
     private Vector3 _initialPosition;
-    
-    private float smooth = 10f;
-    private float smoothRot = 10f;
+    private Vector3 _initialRotation;
 
     private Vector2 _moveInput;
     private Vector2 _mouseInput;
@@ -48,6 +54,13 @@ public class WeaponSway : MonoBehaviour
     private void Awake()
     {
         _initialPosition = transform.localPosition;
+        _initialRotation = transform.eulerAngles;
+        
+        if (_idleSettings != null)
+        {
+            LoadData(_idleSettings);
+        }
+        
     }
 
     // Update is called once per frame
@@ -56,6 +69,17 @@ public class WeaponSway : MonoBehaviour
         _moveInput = _playerController.GetMoveInput();
         _mouseInput = _playerController.GetMouseInput();
         _velocity = _playerController.GetCurrentVelocity() * _speedModifier;
+
+        if (_moveInput == Vector2.zero && _data != _idleSettings)
+        {
+            _data = _idleSettings;
+            LoadData(_data);
+        }
+        else if(_moveInput != Vector2.zero && _data != _moveSettings)
+        {
+            _data = _moveSettings;
+            LoadData(_data);
+        }
         
         Sway();
         BobOffset();
@@ -67,8 +91,7 @@ public class WeaponSway : MonoBehaviour
     #endregion
 
     #region Private Functions
-
-
+    
     private void CompositePositionRotation()
     {
         transform.localPosition = Vector3.Lerp(transform.localPosition, _swayPosition + _bobPosition, Time.deltaTime * smooth);
@@ -94,12 +117,12 @@ public class WeaponSway : MonoBehaviour
         invertLook.x = Mathf.Clamp(invertLook.x, -_maxRotationStep, _maxRotationStep);
         invertLook.y = Mathf.Clamp(invertLook.y, -_maxRotationStep, _maxRotationStep);
 
-        _swayEulerRotation = new Vector3(invertLook.y, invertLook.x, invertLook.x);
+        _swayEulerRotation = new Vector3(invertLook.y, invertLook.x, invertLook.x) + _initialRotation;
     }
 
     private void BobOffset()
     {
-        _speedCurve += Time.deltaTime * (_playerController.IsGrounded ? _velocity.magnitude : 1 * _speedModifier) + 0.01f;
+        _speedCurve += Time.deltaTime * (_playerController.IsGrounded ? _velocity.magnitude : 1 * _speedModifier) + Time.deltaTime;
 
         if (_speedCurve > 100) _speedCurve = 0;
 
@@ -123,6 +146,25 @@ public class WeaponSway : MonoBehaviour
         _bobEulerRotation.z = (_moveInput != Vector2.zero ? _bobMultiplier.z * _curveCos * _moveInput.x : 0);
     }
 
+    private void LoadData(WeaponSwayData data)
+    {
+        _sway = data.sway;
+        _step = data.step;
+        _maxStepDistance = data.maxStepDistance;
+
+        _swayRotation = data.swayRotation;
+        _rotationStep = data.rotationStep;
+        _maxRotationStep = data.maxRotationStep;
+
+        _bobOffset = data.bobOffset;
+        _speedModifier = data.speedModifier;
+        _travelLimit = data.travelLimit;
+        _bobLimit = data.bobLimit;
+
+        _bobRotation = data.bobRotation;
+        _bobMultiplier = data.bobMultiplier;
+    }
+    
     #endregion
     
 }
