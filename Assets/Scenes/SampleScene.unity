@@ -5507,6 +5507,50 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01ee7ca0bbe8cae4ca46311f575f518e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &538707708
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 538707710}
+  - component: {fileID: 538707709}
+  m_Layer: 0
+  m_Name: ObjectPool
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &538707709
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 538707708}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7b3a78c39f0f9b4382c0f2c3e2f9318, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &538707710
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 538707708}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -3.1984694, y: 6.7515984, z: 6.7016325}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &553131157
 GameObject:
   m_ObjectHideFlags: 0
@@ -8865,12 +8909,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _inputHandler: {fileID: 11400000, guid: 675fd9ce7169e5645a5a9a3315e93aab, type: 2}
-  _bulletPrefab: {fileID: 7427987909964875098, guid: 950907a187db3a344be2fed8dbef5c6a,
+  _objectPool: {fileID: 538707709}
+  _bulletPrefab: {fileID: 9143815821785450493, guid: 950907a187db3a344be2fed8dbef5c6a,
     type: 3}
   _playerBody: {fileID: 584710344}
   _cameraController: {fileID: 1565596348}
-  _muzzlePosition: {fileID: 143250308}
-  _projectileSpeed: 700
+  _muzzleTransform: {fileID: 143250308}
+  _projectileSpeed: 200
   _projectileDamage: 20
 --- !u!1 &832575517
 GameObject:
@@ -25159,17 +25204,17 @@ PrefabInstance:
     - target: {fileID: 7427987909964875098, guid: 950907a187db3a344be2fed8dbef5c6a,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 4.395
+      value: 28.03
       objectReference: {fileID: 0}
     - target: {fileID: 7427987909964875098, guid: 950907a187db3a344be2fed8dbef5c6a,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 4.761
+      value: 7.71
       objectReference: {fileID: 0}
     - target: {fileID: 7427987909964875098, guid: 950907a187db3a344be2fed8dbef5c6a,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 1.886
+      value: 5.36
       objectReference: {fileID: 0}
     - target: {fileID: 7427987909964875098, guid: 950907a187db3a344be2fed8dbef5c6a,
         type: 3}
@@ -25590,6 +25635,7 @@ SceneRoots:
   - {fileID: 1328280369}
   - {fileID: 1116135133}
   - {fileID: 399439874}
+  - {fileID: 538707710}
   - {fileID: 12826152}
   - {fileID: 192318629}
   - {fileID: 331129800}
