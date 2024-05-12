@@ -41,17 +41,15 @@ public class Projectile : MonoBehaviour
             GameObject impact = _objectPool.GetObject(_impactVFX);
             impact.transform.position = hit.point;
             
-            Debug.Log(angle);
+            //Debug.Log(hit.collider.name);
             
             if (Mathf.Abs(angle) > .7f)
             {
                 //Debug.Log(angle);
                 impact.transform.localRotation = Quaternion.LookRotation(Vector3.ProjectOnPlane(direction.normalized, hit.normal));
-                //impact.transform.forward = hit.normal
             }
             else
             {
-                //impact.transform.localRotation = Quaternion.FromToRotation(Vector3.forward, hit.normal);
                 impact.transform.localRotation = Quaternion.LookRotation(Vector3.up, hit.normal);
             }
             

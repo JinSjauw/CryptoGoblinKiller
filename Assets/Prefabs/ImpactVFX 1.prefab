@@ -86,7 +86,7 @@ VFXRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
 --- !u!2083052967 &4000819232904164598
 VisualEffect:
   m_ObjectHideFlags: 0
@@ -119,6 +119,9 @@ VisualEffect:
         m_Overridden: 1
       - m_Value: {x: 31.999996, y: 4.6179895, z: 0, w: 0}
         m_Name: Impact Decal Color
+        m_Overridden: 1
+      - m_Value: {x: 6.942979, y: 4.4429755, z: 0.62224793, w: 0}
+        m_Name: Impact Cross Color
         m_Overridden: 1
     m_Uint:
       m_Array: []

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -6,6 +7,7 @@ public class ReturnToPool : MonoBehaviour
     [SerializeField] private float lifeTime;
     
     private ObjectPool _objectPool;
+    private Coroutine _coroutine;
     private void Awake()
     {
         if (_objectPool == null)
@@ -13,10 +15,11 @@ public class ReturnToPool : MonoBehaviour
             _objectPool = FindObjectOfType<ObjectPool>();
         }
     }
-    
-    private void Update()
+
+    private void OnDisable()
     {
-        //StartCoroutine(TimeLife());
+        if(_coroutine == null) return;
+        StopCoroutine(_coroutine);
     }
 
     private IEnumerator TimeLife()
@@ -32,6 +35,6 @@ public class ReturnToPool : MonoBehaviour
     public void SetPool(ObjectPool objectPool)
     {
         _objectPool = objectPool;
-        StartCoroutine(TimeLife());
+        _coroutine = StartCoroutine(TimeLife());
     }
 }
