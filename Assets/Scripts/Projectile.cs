@@ -1,8 +1,10 @@
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.VFX;
 
 public class Projectile : MonoBehaviour
 {
+    [SerializeField] private GameObject _impactVFX;
     [SerializeField] private Transform _debugImpactSphere;
     [SerializeField] private LayerMask _bulletMask;
     
@@ -33,8 +35,28 @@ public class Projectile : MonoBehaviour
     {
         if (Physics.Linecast(_lastPosition, _currentPosition, out RaycastHit hit, _bulletMask))
         {
-            //Debug.Log("Hit " + hit.collider.name);
-            Instantiate(_debugImpactSphere, hit.point, quaternion.identity);
+            Vector3 direction = _currentPosition - _lastPosition;
+            float angle = Vector3.Dot(hit.normal, Vector3.up);
+            
+            GameObject impact = _objectPool.GetObject(_impactVFX);
+            impact.transform.position = hit.point;
+            
+            Debug.Log(angle);
+            
+            if (Mathf.Abs(angle) > .7f)
+            {
+                //Debug.Log(angle);
+                impact.transform.localRotation = Quaternion.LookRotation(Vector3.ProjectOnPlane(direction.normalized, hit.normal));
+                //impact.transform.forward = hit.normal
+            }
+            else
+            {
+                //impact.transform.localRotation = Quaternion.FromToRotation(Vector3.forward, hit.normal);
+                impact.transform.localRotation = Quaternion.LookRotation(Vector3.up, hit.normal);
+            }
+            
+            impact.GetComponent<ReturnToPool>().SetPool(_objectPool);
+            
             _objectPool.ReturnGameObject(gameObject);
         }
     }
@@ -47,6 +69,7 @@ public class Projectile : MonoBehaviour
     
     public void Shoot(Vector3 direction, float speed, float damage)
     {
+        
         _trailRenderer.Clear();
         _currentPosition = transform.position;
         _lastPosition = _currentPosition;

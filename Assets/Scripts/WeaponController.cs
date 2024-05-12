@@ -1,14 +1,16 @@
 using UnityEngine;
 using UnityEngine.Serialization;
+using UnityEngine.VFX;
 
 public class WeaponController : MonoBehaviour
 {
     [SerializeField] private InputHandler _inputHandler;
     [SerializeField] private ObjectPool _objectPool;
-    
+
     [SerializeField] private GameObject _bulletPrefab;
     [SerializeField] private Rigidbody _playerBody;
     [SerializeField] private CameraController _cameraController;
+    [SerializeField] private VisualEffect muzzleFlashVFX;
     [SerializeField] private Transform _muzzleTransform;
     [SerializeField] private float _projectileSpeed;
     [SerializeField] private float _projectileDamage;
@@ -26,6 +28,7 @@ public class WeaponController : MonoBehaviour
     
     private void HandleShoot()
     {
+        muzzleFlashVFX.Play();
         //Get direction to shoot in.
         Vector3 direction = _cameraController.CrossHairRay().direction;
         //Spawn bullet
