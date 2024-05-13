@@ -1,6 +1,6 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.VFX;
 
 public class WeaponController : MonoBehaviour
@@ -20,11 +20,18 @@ public class WeaponController : MonoBehaviour
     
     [SerializeField] private float _projectileSpeed;
     [SerializeField] private float _projectileDamage;
+
+    private float _maxAimCheckDistance = 100;
     
     // Start is called before the first frame update
     void Start()
     {
         _inputHandler.ShootEvent += Shoot;
+    }
+
+    private void Update()
+    {
+        Vector3 direction = _cameraController.CrossHairRay().direction;
     }
 
     private void Shoot()
@@ -36,8 +43,18 @@ public class WeaponController : MonoBehaviour
     {
         _muzzleFlash.Play();
         //Get direction to shoot in.
-        Vector3 direction = _cameraController.CrossHairRay().direction;
+        Ray aimRay = _cameraController.CrossHairRay();
+        Vector3 direction;
 
+        if (Physics.Raycast(aimRay, out RaycastHit hit, _maxAimCheckDistance))
+        {
+            direction = hit.point - _muzzleTransform.position;
+        }
+        else
+        {
+            direction = (aimRay.origin + aimRay.direction * _maxAimCheckDistance) - _muzzleTransform.position;
+        }
+        
         if (_isShotgun)
         {
             _shotgunSpread.transform.forward = direction.normalized;
@@ -51,7 +68,7 @@ public class WeaponController : MonoBehaviour
                 if (pelletObject.TryGetComponent(out Projectile projectile))
                 {
                     projectile.SetPool(_objectPool);
-                    projectile.Shoot(pellet.forward, _projectileSpeed / 2, _projectileDamage);
+                    projectile.Shoot(pellet.forward, _projectileSpeed / 2, _projectileDamage, true);
                 }
                 //launch projectile in its own forward;
             }

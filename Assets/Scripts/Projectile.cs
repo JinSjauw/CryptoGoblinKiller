@@ -1,11 +1,11 @@
-using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.VFX;
 
 public class Projectile : MonoBehaviour
 {
-    [SerializeField] private GameObject _impactVFX;
-    [SerializeField] private Transform _debugImpactSphere;
+    [SerializeField] private GameObject _bulletImpactVFX;
+    [SerializeField] private GameObject _pelletImpactVFX;
+    
     [SerializeField] private LayerMask _bulletMask;
     
     private Rigidbody _rgBody;
@@ -15,6 +15,8 @@ public class Projectile : MonoBehaviour
     
     private Vector3 _currentPosition;
     private Vector3 _lastPosition;
+
+    private bool _isShotgun;
     
     private void Awake()
     {
@@ -37,10 +39,10 @@ public class Projectile : MonoBehaviour
         {
             Vector3 direction = _currentPosition - _lastPosition;
             float angle = Vector3.Dot(hit.normal, Vector3.up);
-            
-            GameObject impact = _objectPool.GetObject(_impactVFX);
-            impact.transform.position = hit.point;
-            
+
+            GameObject impactVFX = _isShotgun ? _pelletImpactVFX : _bulletImpactVFX;
+            GameObject impact = _objectPool.GetObject(impactVFX);
+
             //Debug.Log(hit.collider.name);
             
             if (Mathf.Abs(angle) > .7f)
@@ -53,6 +55,7 @@ public class Projectile : MonoBehaviour
                 impact.transform.localRotation = Quaternion.LookRotation(Vector3.up, hit.normal);
             }
             
+            impact.transform.position = hit.point;
             impact.GetComponent<ReturnToPool>().SetPool(_objectPool);
             
             _objectPool.ReturnGameObject(gameObject);
@@ -65,9 +68,9 @@ public class Projectile : MonoBehaviour
         _returnToPool.SetPool(objectPool);
     }
     
-    public void Shoot(Vector3 direction, float speed, float damage)
+    public void Shoot(Vector3 direction, float speed, float damage, bool isShotgun = false)
     {
-        
+        _isShotgun = isShotgun;
         _trailRenderer.Clear();
         _currentPosition = transform.position;
         _lastPosition = _currentPosition;

@@ -23,13 +23,22 @@ public class ObjectPool : MonoBehaviour
         else { return CreateNewObject(objectToReturn); }
     }
 
-    private GameObject CreateNewObject(GameObject createdGameObject) 
+    private GameObject CreateNewObject(GameObject createdGameObject)
     {
-        GameObject newGameObject = Instantiate(createdGameObject, transform);
+        Transform parentTransform = transform.Find(createdGameObject.name);
+        
+        if (parentTransform == null)
+        {
+            parentTransform = new GameObject().transform;
+            parentTransform.SetParent(transform);
+            parentTransform.name = createdGameObject.name;
+        }
+        
+        GameObject newGameObject = Instantiate(createdGameObject, parentTransform);
         newGameObject.name = createdGameObject.name;
         return newGameObject;
     }
-
+    
     public void ReturnGameObject(GameObject returnedGameObject) 
     {
         if(_objectPool.TryGetValue(returnedGameObject.name, out Queue<GameObject> objectList)) 

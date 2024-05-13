@@ -47,9 +47,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 546125301519bae44820417f81361457, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _impactVFX: {fileID: 8943143273360834807, guid: e172fb1d93e99d849ad6524e2814c25f,
+  _bulletImpactVFX: {fileID: 8943143273360834807, guid: e172fb1d93e99d849ad6524e2814c25f,
     type: 3}
-  _debugImpactSphere: {fileID: 7440742332939931110, guid: 079f5ac2993f54840a7d590e90c23f12,
+  _pelletImpactVFX: {fileID: 8943143273360834807, guid: bcefcfb8c375b5341962f373654f1d62,
     type: 3}
   _bulletMask:
     serializedVersion: 2

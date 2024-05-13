@@ -177,7 +177,7 @@ public class CameraController : MonoBehaviour
     public Ray CrossHairRay()
     {
         Ray ray = _playerCamera.ScreenPointToRay(_crossHair.position);
-        //Debug.DrawRay(ray.origin, ray.direction * 45, Color.blue);
+        Debug.DrawRay(ray.origin, ray.direction * 45, Color.blue);
         return ray;
     }
     
