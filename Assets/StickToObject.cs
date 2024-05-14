@@ -14,5 +14,6 @@ public class StickToObject : MonoBehaviour
     public void UnStick()
     {
         transform.SetParent(_lastParent);
+        transform.localScale = Vector3.one;
     }
 }

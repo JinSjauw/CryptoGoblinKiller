@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class GoblinThorax : MonoBehaviour
+public class GoblinHead : MonoBehaviour
 {
     // Start is called before the first frame update
     void Start()

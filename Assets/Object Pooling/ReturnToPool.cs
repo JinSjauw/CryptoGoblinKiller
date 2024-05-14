@@ -34,7 +34,8 @@ public class ReturnToPool : MonoBehaviour
         if (_objectPool != null)
         {
             //gameObject.SetActive(false);
-            _stickToObject.UnStick();
+            if(_stickToObject != null) _stickToObject.UnStick();
+            
             _objectPool.ReturnGameObject(gameObject);
         }
     }
