@@ -57,6 +57,11 @@ public class Projectile : MonoBehaviour
             
             impact.transform.position = hit.point;
             impact.GetComponent<ReturnToPool>().SetPool(_objectPool);
+            if (hit.collider.GetComponent<GoblinThorax>())
+            {
+                Debug.Log("Hit goblin Thorax: " + hit.collider.name);
+                impact.GetComponent<StickToObject>().Stick(hit.transform);
+            }
             
             _objectPool.ReturnGameObject(gameObject);
         }

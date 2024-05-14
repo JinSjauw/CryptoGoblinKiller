@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: -776808789460463938}
   - component: {fileID: 4383716329375615188}
   - component: {fileID: 4000819232904164598}
+  - component: {fileID: 5412395411042196360}
   m_Layer: 0
   m_Name: PelletImpactVFX
   m_TagString: Untagged
@@ -47,6 +48,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   lifeTime: 2
+  _stickToObject: {fileID: 5412395411042196360}
 --- !u!73398921 &4383716329375615188
 VFXRenderer:
   serializedVersion: 1
@@ -137,3 +139,15 @@ VisualEffect:
       m_Array: []
     m_Bool:
       m_Array: []
+--- !u!114 &5412395411042196360
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8943143273360834807}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1da53c77db733543949afe77ab83320, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
