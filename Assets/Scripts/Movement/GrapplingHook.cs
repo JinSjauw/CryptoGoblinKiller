@@ -9,6 +9,10 @@ public class GrapplingHook : MonoBehaviour
     [SerializeField] private InputHandler _inputHandler;
     [SerializeField] private Transform _grappleTransform;
     
+    [Header("Grapple Layers")] 
+    [SerializeField] private LayerMask _grappleLayer;
+    [SerializeField] private LayerMask _grappleInterruptLayer;
+    
     [Header("Swinging Time Variables")]
     [SerializeField] private float _maxSwingTime;
     [SerializeField] private float _maxSwingDistance;
@@ -46,8 +50,6 @@ public class GrapplingHook : MonoBehaviour
     private LineRenderer _lineRenderer;
     private Rigidbody _rgBody;
     
-    //Stored layer(s) for grappling
-    private LayerMask _grappleLayer;
     
     private Vector3 _swingAnchorPoint;
     private SpringJoint _swingJoint;
@@ -70,7 +72,7 @@ public class GrapplingHook : MonoBehaviour
         _lineRenderer = _grappleTransform.GetComponent<LineRenderer>();
         _rgBody = GetComponent<Rigidbody>();
         
-        _grappleLayer = LayerMask.GetMask("Wall");
+        //_grappleInterruptLayer = LayerMask.GetMask("Wall");
 
         _ropeAnimationSpring = new SpringUtils.SpringMotionParams();
     }
@@ -101,7 +103,7 @@ public class GrapplingHook : MonoBehaviour
         ActuateHook();
         
         if (Physics.Raycast(_grappleTransform.position, _swingAnchorPoint - _grappleTransform.position, _currentSwingDistance * 0.95f,
-                _grappleLayer))
+                _grappleInterruptLayer))
         {
             _ropeCutoffTimer += Time.fixedDeltaTime;
             //Set timer to stop the swing
@@ -141,7 +143,7 @@ public class GrapplingHook : MonoBehaviour
         RaycastHit hit;
         //Have a separate object that would contain the actual grappling hook firing point & spring component;
         
-        if (Physics.Raycast(_cameraController.CrossHairRay(), out hit, _maxSwingDistance))
+        if (Physics.Raycast(_cameraController.CrossHairRay(), out hit, _maxSwingDistance, _grappleLayer))
         {
             _swingAnchorPoint = hit.point;
             _swingJoint = _grappleTransform.AddComponent<SpringJoint>();

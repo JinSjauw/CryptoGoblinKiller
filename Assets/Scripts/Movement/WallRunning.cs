@@ -116,7 +116,7 @@ public class WallRunning : MonoBehaviour
         //Has hit wall and is in air
         if((_left || _right) && _movementInput.magnitude > 0 && !_playerController.IsGrounded && !_exitingWall)
         {
-            if (!_playerController.IsWallRunning && !_playerController.IsSwinging)
+            if (!_playerController.IsWallRunning)
             {
                 _playerController.IsWallRunning = true;
                 _wallRunTimer = 0;
@@ -128,7 +128,7 @@ public class WallRunning : MonoBehaviour
 
             WallRun();
             
-            _rgBody.AddForce(Vector3.down * (_wallRunGravity * _rgBody.mass));
+            //_rgBody.AddForce(Vector3.down * (_wallRunGravity * _rgBody.mass));
             
             if (_wallRunTimer < _wallRunTime)
             {
@@ -180,6 +180,8 @@ public class WallRunning : MonoBehaviour
         
         Vector3 wallForward = Vector3.Cross(wallNormal, transform.up);
 
+        _rgBody.AddForce(Vector3.ProjectOnPlane(Vector3.down, wallNormal) * (_wallRunGravity * _rgBody.mass));
+        
         if ((transform.forward - wallForward).magnitude > (transform.forward - -wallForward).magnitude)
         {
             wallForward = -wallForward;

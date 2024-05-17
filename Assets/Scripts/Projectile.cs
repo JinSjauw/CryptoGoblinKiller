@@ -55,11 +55,11 @@ public class Projectile : MonoBehaviour
                 impact.transform.localRotation = Quaternion.LookRotation(Vector3.up, hit.normal);
             }
             
-            impact.transform.position = hit.point;
+            impact.transform.position = hit.point + hit.normal * 0.01f;
             impact.GetComponent<ReturnToPool>().SetPool(_objectPool);
             if (hit.collider.TryGetComponent(out EnemyHitBox hitBox))
             {
-                Debug.Log("Hit goblin Thorax: " + hit.collider.name);
+                //Debug.Log("Hit goblin Thorax: " + hit.collider.name);
                 hitBox.PlayHit();
                 impact.GetComponent<StickToObject>().Stick(hit.transform);
             }

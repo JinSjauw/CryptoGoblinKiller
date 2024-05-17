@@ -2912,6 +2912,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _inputHandler: {fileID: 11400000, guid: 675fd9ce7169e5645a5a9a3315e93aab, type: 2}
   _grappleTransform: {fileID: 6263742943546625139}
+  _grappleLayer:
+    serializedVersion: 2
+    m_Bits: 448
+  _grappleInterruptLayer:
+    serializedVersion: 2
+    m_Bits: 128
   _maxSwingTime: 2.5
   _maxSwingDistance: 45
   _ropeCutoffTime: 0.2
