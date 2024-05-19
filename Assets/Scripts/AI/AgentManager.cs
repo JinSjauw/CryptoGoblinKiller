@@ -4,6 +4,7 @@ using UnityEngine;
 public class AgentManager : MonoBehaviour
 {
     [SerializeField] private Transform _agentPrefab;
+    [SerializeField] private List<Transform> _defendPoints;
     [SerializeField] private List<Transform> _spawnPoints;
 
     private ObjectPool _objectPool;

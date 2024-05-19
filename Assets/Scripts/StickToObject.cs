@@ -1,9 +1,15 @@
+using System;
 using UnityEngine;
 
 public class StickToObject : MonoBehaviour
 {
-    private Transform _target;
-    private Transform _lastParent;
+    //private Transform _target;
+    [SerializeField] private Transform _lastParent;
+
+    private void Awake()
+    {
+        _lastParent = transform.parent;
+    }
 
     public void Stick(Transform target)
     {
