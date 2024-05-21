@@ -30064,7 +30064,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28c3e01db53ef5144b1496b7ed632190, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _health: 100
+  _health: 1000
 --- !u!54 &1810091768
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -34300,7 +34300,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28c3e01db53ef5144b1496b7ed632190, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _health: 100
+  _health: 1000
 --- !u!64 &2097624366
 MeshCollider:
   m_ObjectHideFlags: 0

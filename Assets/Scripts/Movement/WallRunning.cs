@@ -10,6 +10,10 @@ public class WallRunning : MonoBehaviour
     [Header("Walls To Run")] 
     [SerializeField] private LayerMask _wallMask;
 
+    [Header("Wall Run Spring")] 
+    [SerializeField] private SpringData _wallRunSpring;
+    [FormerlySerializedAs("_wallOffset")] [SerializeField] private float _wallOffsetLength;
+    
     [Header("Wall Run")] 
     [SerializeField] private float _wallRunGravity;
     [SerializeField] private float _wallRunTime;
@@ -50,12 +54,14 @@ public class WallRunning : MonoBehaviour
     private Rigidbody _rgBody;
     private PlayerController _playerController;
     private CameraController _cameraController;
+    private SpringUtils.SpringMotionParams _springMotionParams;
     
     private void Awake()
     {
         _rgBody = GetComponent<Rigidbody>();
         _playerController = GetComponent<PlayerController>();
         _cameraController = transform.root.GetComponentInChildren<CameraController>();
+        _springMotionParams = new SpringUtils.SpringMotionParams();
     }
 
     private void Start()
@@ -100,6 +106,23 @@ public class WallRunning : MonoBehaviour
     private void JumpInput()
     {
         WallJump(_wallJumpUpForce, _wallJumpSideForce, _wallJumpForwardForce);   
+    }
+
+    private void HoverFromWall()
+    {
+        Vector3 direction = _right ? transform.right : -transform.right;
+
+        if (Physics.Raycast(transform.position, direction, out RaycastHit hit, _wallOffsetLength, LayerMask.GetMask("Wall")))
+        {
+            Vector3 velocity = _rgBody.velocity;
+
+            float directionVelocity = Vector3.Dot(direction, velocity);
+            float x = hit.distance - _wallOffsetLength;
+            float springForce = ((x * _wallRunSpring.frequency) -
+                                 (directionVelocity * _wallRunSpring.dampingRatio) * _rgBody.mass);
+            
+            _rgBody.AddForce(direction * springForce);
+        }
     }
     
     private void CheckForWall()
@@ -201,8 +224,10 @@ public class WallRunning : MonoBehaviour
         }
         
         //If Player isn't trying to get away from wall. (Jumps)
-        Vector3 wallStickForce = -wallNormal * (100 * _rgBody.mass);
-        _rgBody.AddForce(wallStickForce, ForceMode.Force);
+        //Vector3 wallStickForce = -wallNormal * (100 * _rgBody.mass);
+        //_rgBody.AddForce(wallStickForce, ForceMode.Force);
+        
+        HoverFromWall();
         
         _playerController.ApplyForce(wallForward, _wallRunSpeed);
     }
