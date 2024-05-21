@@ -21,6 +21,8 @@ public class WeaponController : MonoBehaviour
     [SerializeField] private float _projectileSpeed;
     [SerializeField] private float _projectileDamage;
 
+    [SerializeField] private LayerMask _obstacleLayer;
+    
     private float _maxAimCheckDistance = 100;
     
     // Start is called before the first frame update
@@ -31,7 +33,7 @@ public class WeaponController : MonoBehaviour
 
     private void Update()
     {
-        Vector3 direction = _cameraController.CrossHairRay().direction;
+        //Vector3 direction = _cameraController.CrossHairRay().direction;
     }
 
     private void Shoot()
@@ -46,7 +48,7 @@ public class WeaponController : MonoBehaviour
         Ray aimRay = _cameraController.CrossHairRay();
         Vector3 direction;
 
-        if (Physics.Raycast(aimRay, out RaycastHit hit, _maxAimCheckDistance))
+        if (Physics.Raycast(aimRay, out RaycastHit hit, _maxAimCheckDistance, _obstacleLayer))
         {
             direction = hit.point - _muzzleTransform.position;
         }

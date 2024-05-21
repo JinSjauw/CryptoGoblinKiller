@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.VFX;
 
 public class Projectile : MonoBehaviour
 {
@@ -17,6 +16,7 @@ public class Projectile : MonoBehaviour
     private Vector3 _lastPosition;
 
     private bool _isShotgun;
+    private float _damage;
     
     private void Awake()
     {
@@ -60,7 +60,7 @@ public class Projectile : MonoBehaviour
             if (hit.collider.TryGetComponent(out EnemyHitBox hitBox))
             {
                 //Debug.Log("Hit goblin Thorax: " + hit.collider.name);
-                hitBox.PlayHit();
+                hitBox.Hit(_damage);
                 impact.GetComponent<StickToObject>().Stick(hit.transform);
             }
             
@@ -74,6 +74,7 @@ public class Projectile : MonoBehaviour
         _returnToPool.SetPool(objectPool);
     }
     
+    //Initialization of projectile
     public void Shoot(Vector3 direction, float speed, float damage, bool isShotgun = false)
     {
         _isShotgun = isShotgun;
@@ -83,5 +84,6 @@ public class Projectile : MonoBehaviour
         transform.forward = direction;
         //_rgBody.AddForce(direction * speed * _rgBody.mass);
         _rgBody.velocity = direction * speed * _rgBody.mass;
+        _damage = damage;
     }
 }

@@ -1,11 +1,10 @@
-using System;
 using System.Collections;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.VFX;
 
 public class EnemyHitBox : MonoBehaviour
 {
+    [SerializeField] private bool _resetHead;
     [SerializeField] private HitBoxType _type;
     [SerializeField] private VisualEffect _hitFX;
 
@@ -17,10 +16,14 @@ public class EnemyHitBox : MonoBehaviour
     private float _headScale;
     private float _headScaleDelta;
 
+    private HealthComponent _healthComponent;
+    
     private void Awake()
     {
         _headScale = 1;
         _springMotionParams = new SpringUtils.SpringMotionParams();
+
+        _healthComponent = GetComponentInParent<HealthComponent>();
     }
 
     private void Update()
@@ -35,7 +38,8 @@ public class EnemyHitBox : MonoBehaviour
             if (_headScale <= _targetHeadScale)
             {
                 _animateHead = false;
-                StartCoroutine(ResetHead(1.5f));
+                
+                if(_resetHead) StartCoroutine(ResetHead(1.5f));
             }
             
             transform.localScale *= _headScale;
@@ -50,13 +54,18 @@ public class EnemyHitBox : MonoBehaviour
         Debug.Log("Reset Head");
     }
     
-    public void PlayHit()
+    public void Hit(float damage)
     {
+        _healthComponent.TakeDamage(damage, _type);
+        
         //_hitFX.Play();
         if (_type == HitBoxType.HEAD)
         {
-            _headScale += .25f;
-            _animateHead = true;
+            if (!_animateHead)
+            {
+                _headScale += .25f;
+                _animateHead = true;
+            }
         }
         else
         {
@@ -68,7 +77,8 @@ public class EnemyHitBox : MonoBehaviour
 
 public enum HitBoxType
 {
-    CHEST = 0,
-    HEAD = 1,
-    LEG = 2,
+    DEFAULT = 0,
+    CHEST = 1,
+    HEAD = 2,
+    LEG = 3,
 }

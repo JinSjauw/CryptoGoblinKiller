@@ -1,18 +1,28 @@
+using System;
 using UnityEngine;
 
 public class HealthComponent : MonoBehaviour
 {
     [SerializeField] private float _health;
 
+    public event EventHandler DeathEvent;
     public float Health => _health;
-    
-    public void TakeDamage(float damage)
+
+    public void TakeDamage(float damage, HitBoxType type = HitBoxType.DEFAULT)
     {
-        _health -= damage;
+        float actualDamage = damage;
+
+        if (type == HitBoxType.HEAD)
+        {
+            actualDamage = damage * 15;
+        }
+        
+        _health -= actualDamage;
 
         if (_health <= 0)
         {
-            Debug.Log("Death for: " + transform.name);
+            DeathEvent?.Invoke(this, EventArgs.Empty);
+            //Debug.Log("Death for: " + transform.name);
         }
     }
     
