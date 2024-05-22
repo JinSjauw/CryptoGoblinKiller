@@ -4,6 +4,7 @@ public class Projectile : MonoBehaviour
 {
     [SerializeField] private GameObject _bulletImpactVFX;
     [SerializeField] private GameObject _pelletImpactVFX;
+    [SerializeField] private GameObject _bloodBurstVFX;
     
     [SerializeField] private LayerMask _bulletMask;
     
@@ -59,8 +60,13 @@ public class Projectile : MonoBehaviour
             impact.GetComponent<ReturnToPool>().SetPool(_objectPool);
             if (hit.collider.TryGetComponent(out EnemyHitBox hitBox))
             {
-                //Debug.Log("Hit goblin Thorax: " + hit.collider.name);
                 hitBox.Hit(_damage);
+                
+                GameObject bloodVFX = _objectPool.GetObject(_bloodBurstVFX);
+                bloodVFX.transform.position = impact.transform.position;
+                bloodVFX.transform.localRotation = impact.transform.localRotation;
+                bloodVFX.GetComponent<ReturnToPool>().SetPool(_objectPool);
+                bloodVFX.GetComponent<StickToObject>().Stick(hit.transform);
                 impact.GetComponent<StickToObject>().Stick(hit.transform);
             }
             

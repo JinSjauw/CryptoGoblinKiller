@@ -3,8 +3,10 @@ using UnityEngine;
 
 public class HealthComponent : MonoBehaviour
 {
+    [SerializeField] private float _maxHealth;
     [SerializeField] private float _health;
-
+    //[SerializeField] private GameObject _vfxObject;
+    
     public event EventHandler DeathEvent;
     public float Health => _health;
 
@@ -14,7 +16,7 @@ public class HealthComponent : MonoBehaviour
 
         if (type == HitBoxType.HEAD)
         {
-            actualDamage = damage * 15;
+            actualDamage *= 6;
         }
         
         _health -= actualDamage;
@@ -22,8 +24,11 @@ public class HealthComponent : MonoBehaviour
         if (_health <= 0)
         {
             DeathEvent?.Invoke(this, EventArgs.Empty);
-            //Debug.Log("Death for: " + transform.name);
         }
     }
-    
+
+    private void OnDisable()
+    {
+        _health = _maxHealth;
+    }
 }
