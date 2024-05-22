@@ -495,7 +495,7 @@ GameObject:
   - component: {fileID: 2094471797109330937}
   - component: {fileID: 2139630550473262750}
   - component: {fileID: 3059113341180653708}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: HEADVFX (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -936,7 +936,7 @@ GameObject:
   - component: {fileID: 7796300621533917500}
   - component: {fileID: 4365958777261007771}
   - component: {fileID: 4204945374514091948}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: HEADVFX
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2130,7 +2130,7 @@ GameObject:
   - component: {fileID: 7934924560528367114}
   - component: {fileID: 6081671926371466786}
   - component: {fileID: 93589071509569646}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: HITVFX
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2964,7 +2964,7 @@ GameObject:
   - component: {fileID: 9201108886769159598}
   - component: {fileID: 8884611448159366292}
   - component: {fileID: 2605215299403645605}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: GoblinNPC
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3052,15 +3052,16 @@ MonoBehaviour:
     m_Bits: 448
   _detectionRadius: 30
   _moveSpeed: 14
-  _eyePosition: {fileID: 5300299358386888243}
+  _eyesTransform: {fileID: 5300299358386888243}
   _chaseSensor: {fileID: 7928592741813470801}
   _attackSensor: {fileID: 4861410046304560110}
+  _siegePriorityRadius: 8
   _chaseSpeed: 16
   _chaseRadius: 45
   _attackRadius: 5
   _attackDelay: 1
   _attackDamage: 15
-  _corpseTimer: 0
+  _corpseTimer: 4
   _state: 0
 --- !u!96 &9201108886769159598
 TrailRenderer:

@@ -6,6 +6,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Serialization;
+using Random = UnityEngine.Random;
 
 
 public class EnemyAgent : MonoBehaviour
@@ -21,12 +22,16 @@ public class EnemyAgent : MonoBehaviour
     [SerializeField] private float _moveSpeed;
     
     //Sensor Colliders
+    [FormerlySerializedAs("_eyePosition")]
     [Header("Sensors")] 
-    [SerializeField] private Transform _eyePosition;
+    [SerializeField] private Transform _eyesTransform;
     [SerializeField] private SensorRange _chaseSensor;
     [SerializeField] private SensorRange _attackSensor;
+
+    [Header("Actions")] 
     
-    [Header("Actions")]
+    [Header("Siege")] 
+    [SerializeField] private float _siegePriorityRadius;
     
     [Header("Chase")]
     [SerializeField] private float _chaseSpeed;
@@ -41,6 +46,9 @@ public class EnemyAgent : MonoBehaviour
     [SerializeField] private float _corpseTimer;
 
     public event EventHandler<EnemyAgent> AgentDeathEvent;
+
+    public NPCStates State => _state;
+    
     
     //Object Pool
     private ObjectPool _objectPool;
@@ -51,7 +59,10 @@ public class EnemyAgent : MonoBehaviour
     //Targets
     private List<Transform> _targetList;
     private Transform _targetObjective;
+    private int _targetIndex;
+    
     private Transform _playerTransform;
+    private Vector3 _targetDestination;
     
     //#TODO Temp vars, need to be split up into different classes later 
     
@@ -119,6 +130,11 @@ public class EnemyAgent : MonoBehaviour
         {
             PlayAnimation(NPCStates.MOVING);
         }
+
+        if (_state == NPCStates.GUARDING)
+        {
+            PlayAnimation(NPCStates.GUARDING);
+        }
     }
 
     private void OnEnable()
@@ -141,12 +157,13 @@ public class EnemyAgent : MonoBehaviour
         _playerTransform = playerTransform;
         _targetObjective = target;
         _targetList = new List<Transform>(targetsList);
+        //_targetIndex = _targetList.IndexOf(_targetObjective);
         _objectPool = objectPool;
         
         Move(_targetObjective, _moveSpeed);
         _animator.Play("walk");
     }
-
+    
     public bool IsInitialized()
     {
         return _isInitialized;
@@ -179,6 +196,9 @@ public class EnemyAgent : MonoBehaviour
             case NPCStates.MOVING:
                 _animator.Play("walk");
                 break;
+            case NPCStates.GUARDING:
+                _animator.Play("idle_battle");
+                break;
         }
     }
 
@@ -197,6 +217,8 @@ public class EnemyAgent : MonoBehaviour
     {
         if (CheckLineOfSight(target))
         {
+            if(_state == NPCStates.SIEGING && Vector3.Distance(_eyesTransform.position, target.position) > _siegePriorityRadius) return;
+            
             //ChangeState(NPCStates.CHASING);
             ChangeTarget(target);
         }
@@ -214,6 +236,8 @@ public class EnemyAgent : MonoBehaviour
     {
         //Debug.Log("In Attack Range");
         
+        if(_state == NPCStates.MOVING) return;
+        
         if (target.TryGetComponent(out HealthComponent healthComponent))
         {
             //Debug.Log("Attacking: " + healthComponent.name);
@@ -228,7 +252,6 @@ public class EnemyAgent : MonoBehaviour
         _targetHealthComponent = null;
         ChangeState(NPCStates.CHASING);
     }
-    
 
     #endregion
     
@@ -256,8 +279,19 @@ public class EnemyAgent : MonoBehaviour
             Move(target, _moveSpeed);
             ChangeState(NPCStates.MOVING);
         }
-        
         //Debug.Log("Changing Target: " + target.name);
+    }
+    
+    public void SetObjectivePosition(Vector3 position, NPCStates state)
+    {
+        _agent.destination = position;
+        _state = state;
+    }
+
+    public void GoNextPoint()
+    {
+        _state = NPCStates.MOVING;
+        Move(_targetList[Random.Range(0, _targetList.Count - 1)], _moveSpeed);
     }
     
     #endregion
@@ -266,12 +300,12 @@ public class EnemyAgent : MonoBehaviour
 
     private bool CheckLineOfSight(Transform target)
     {
-        return !Physics.Linecast(target.position, _eyePosition.position, _obstacleMask);
+        return !Physics.Linecast(target.position, _eyesTransform.position, _obstacleMask);
     }
 
     private float CheckDistance(Transform target)
     {
-        return Vector3.Distance(target.position, _eyePosition.position);
+        return Vector3.Distance(target.position, _eyesTransform.position);
     }
 
     private IEnumerator ReturnToPool(float delay)
@@ -284,11 +318,14 @@ public class EnemyAgent : MonoBehaviour
     #endregion
     
     #region Action Execution
-
+    
+    //Change Agent Destination
     private void Move(Transform target, float speed)
     {
+        _targetDestination = target.position;
+        
         _agent.speed = speed;
-        _agent.SetDestination(target.position);
+        _agent.SetDestination(_targetDestination);
     }
     
     private void Chase(Transform target, float interval)
@@ -314,6 +351,10 @@ public class EnemyAgent : MonoBehaviour
     private void Attack(HealthComponent target, float damage, float interval)
     {
         if(target == null) return;
+
+        Vector3 targetPosition = target.transform.position;
+        
+        transform.LookAt(new Vector3(targetPosition.x, transform.position.y, targetPosition.z));
         
         if (target.Health <= 0)
         {
@@ -355,7 +396,7 @@ public class EnemyAgent : MonoBehaviour
         _animator.Play("death1");
         _agent.isStopped = true;
         AgentDeathEvent?.Invoke(this, this);
-        StartCoroutine(ReturnToPool(4));
+        StartCoroutine(ReturnToPool(_corpseTimer));
     }
 
     #endregion

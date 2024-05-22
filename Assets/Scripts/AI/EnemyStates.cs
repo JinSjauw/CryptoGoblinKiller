@@ -8,4 +8,6 @@ public enum EnemyStates
     CHASING = 3, 
     ATTACKING = 4,
     DEAD = 5,
+    SIEGING = 6,
+    GUARDING = 7,
 }

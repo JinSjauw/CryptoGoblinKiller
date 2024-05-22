@@ -29,11 +29,19 @@ public class WeaponController : MonoBehaviour
     void Start()
     {
         _inputHandler.ShootEvent += Shoot;
+        _inputHandler.WeaponChangeEvent += ChangeWeapon;
     }
 
-    private void Update()
+    private void ChangeWeapon(float state)
     {
-        //Vector3 direction = _cameraController.CrossHairRay().direction;
+        if (state >= 1)
+        {
+            _isShotgun = false;
+        }
+        else if (state <= -1)
+        {
+            _isShotgun = true;
+        }
     }
 
     private void Shoot()
