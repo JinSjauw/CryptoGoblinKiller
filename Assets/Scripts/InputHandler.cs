@@ -13,7 +13,8 @@ public class InputHandler : ScriptableObject, StandardInput.IGameplayActions
     public UnityAction<Vector2> GrappleActuateEvent;
     public UnityAction ShootEvent;
     public UnityAction<float> WeaponChangeEvent;
-
+    public UnityAction WeaponReloadEvent;
+    
     private Vector2 _grappleRopeInput;
     
     private StandardInput _input;
@@ -94,6 +95,14 @@ public class InputHandler : ScriptableObject, StandardInput.IGameplayActions
         if (context.performed)
         {
             WeaponChangeEvent.Invoke(context.ReadValue<float>());
+        }
+    }
+
+    public void OnReload(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            WeaponReloadEvent.Invoke();
         }
     }
 }
