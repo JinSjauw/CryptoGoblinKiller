@@ -15,7 +15,7 @@ public class AgentManager : MonoBehaviour
     [SerializeField] private List<EnemyAgent> _activeList;
     
     //Wave Settings
-
+    
     [SerializeField] private int _waveAmount;
     [SerializeField] private int _waveDelay;
     
@@ -42,6 +42,18 @@ public class AgentManager : MonoBehaviour
 
     #endregion
 
+    #region Public Functions
+
+    public void KillWave()
+    {
+        foreach (EnemyAgent agent in _activeList)
+        {
+            agent.GetComponent<HealthComponent>().TakeDamage(10000);
+        }
+    }
+
+    #endregion
+    
     #region Private Regions
 
     private void SpawnAgent(Vector3 position)
@@ -53,8 +65,12 @@ public class AgentManager : MonoBehaviour
             agent.transform.position = position + Random.insideUnitSphere;
             
             if(agent.IsInitialized()) return;
+
+            Transform targetObjective = _defendPoints[Random.Range(0, _defendPoints.Count)];
+            List<Transform> objectivesList = new List<Transform>(_defendPoints);
+            objectivesList.Remove(targetObjective);
             
-            agent.Initialize(_playerTransform, _defendPoints[Random.Range(0, _defendPoints.Count)], _defendPoints, _objectPool);
+            agent.Initialize(_playerTransform, targetObjective, objectivesList, _objectPool);
         }
     }
 

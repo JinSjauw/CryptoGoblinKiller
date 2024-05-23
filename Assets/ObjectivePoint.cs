@@ -17,11 +17,11 @@ public class ObjectivePoint : MonoBehaviour
 
     private HealthComponent _healthComponent;
     
-    private List<Vector3> _surroundPositions;
-    private List<Vector3> _openSurroundPositions;
+    [SerializeField] private List<Vector3> _surroundPositions;
+    [FormerlySerializedAs("_openSurroundPositions")] [SerializeField] private List<Vector3> _openSiegePositions;
     
-    private List<Vector3> _guardPositions;
-    private List<Vector3> _openGuardPositions;
+    [SerializeField] private List<Vector3> _guardPositions;
+    [SerializeField] private List<Vector3> _openGuardPositions;
     
     private Dictionary<EnemyAgent, Vector3> _siegerList;
     private Dictionary<EnemyAgent, Vector3> _guardList;
@@ -33,7 +33,7 @@ public class ObjectivePoint : MonoBehaviour
         _healthComponent = GetComponent<HealthComponent>();
         
         _surroundPositions = CalculateCircledPositions(_siegeRadius, _maxSieging, transform.position);
-        _openSurroundPositions = new List<Vector3>(_surroundPositions);
+        _openSiegePositions = new List<Vector3>(_surroundPositions);
         
         _guardPositions = CalculateCircledPositions(_guardRadius, _maxGuarding, transform.position);
         _openGuardPositions = new List<Vector3>(_guardPositions);
@@ -47,11 +47,23 @@ public class ObjectivePoint : MonoBehaviour
         _healthComponent.DeathEvent += OnDestruction;
     }
 
+    private void OnDisable()
+    {
+        _healthComponent.DeathEvent -= OnDestruction;
+    }
+
     private void OnDestruction(object sender, EventArgs e)
     {
         foreach (EnemyAgent agent in _guardList.Keys)
         {
             agent.GoNextPoint();
+            agent.AgentDeathEvent -= OnAgentDeath;
+        }
+
+        foreach (EnemyAgent agent in _siegerList.Keys)
+        {
+            agent.GoNextPoint();
+            agent.AgentDeathEvent -= OnAgentDeath;
         }
     }
 
@@ -59,46 +71,80 @@ public class ObjectivePoint : MonoBehaviour
     {
         EnemyAgent agent = other.GetComponentInParent<EnemyAgent>();
         
-        //Debug.Log(other.name);
+        if(other.GetComponent<SensorRange>()) return;
         
-        if(_healthComponent.Health <= 0) agent.GoNextPoint();
+        //Debug.Log(other.name);
         
         if (agent != null)
         {
+            if(_siegerList.ContainsKey(agent) || _guardList.ContainsKey(agent)) return;
+            
+            if (_healthComponent.Health <= 0 || (_openGuardPositions.Count <= 0 && _openSiegePositions.Count <= 0))
+            {
+                agent.GoNextPoint();
+                //agent.Stop();
+                return;
+            }
+            
             Debug.Log(agent.name);
 
-            if (agent.State == NPCStates.MOVING && _openSurroundPositions.Count > 0 && !_siegerList.ContainsKey(agent))
+            if (agent.State == NPCStates.CHASING || agent.State == NPCStates.ATTACKING)
             {
-                Vector3 surroundPosition = _openSurroundPositions[Random.Range(0, _openSurroundPositions.Count)];
+                return;
+            }
+            
+            if (_openSiegePositions.Count > 0 && !_siegerList.ContainsKey(agent))
+            {
+                Vector3 surroundPosition = _openSiegePositions[Random.Range(0, _openSiegePositions.Count)];
                 
+                _openSiegePositions.Remove(surroundPosition);
                 agent.SetObjectivePosition(surroundPosition, NPCStates.SIEGING);
                 _siegerList.Add(agent, surroundPosition);
-                _openSurroundPositions.Remove(surroundPosition);
             }
-            else if (agent.State == NPCStates.MOVING && _openGuardPositions.Count > 0 && !_guardList.ContainsKey(agent))
+            else if (_openGuardPositions.Count > 0 && !_guardList.ContainsKey(agent))
             {
                 Vector3 guardPosition = _openGuardPositions[Random.Range(0, _openGuardPositions.Count)];
                 
+                _openGuardPositions.Remove(guardPosition); 
                 agent.SetObjectivePosition(guardPosition, NPCStates.GUARDING);
                 _guardList.Add(agent, guardPosition);
-                _openGuardPositions.Remove(guardPosition); 
             }
+            
+            agent.AgentDeathEvent += OnAgentDeath;
         }
+    }
+
+    private void OnAgentDeath(object sender, EnemyAgent deadAgent)
+    {
+        if (_siegerList.ContainsKey(deadAgent))
+        {
+            _openSiegePositions.Add(_siegerList[deadAgent]);
+            _siegerList.Remove(deadAgent);
+        }
+
+        if (_guardList.ContainsKey(deadAgent))
+        {
+            _openGuardPositions.Add(_guardList[deadAgent]);
+            _guardList.Remove(deadAgent);
+        }
+        
+        deadAgent.AgentDeathEvent -= OnAgentDeath;
     }
 
     private void OnTriggerExit(Collider other)
     {
         EnemyAgent agent = other.GetComponentInParent<EnemyAgent>();
         
+        if(other.GetComponent<SensorRange>()) return;
         //Debug.Log(other.name);
         
         if (agent != null)
         {
-            Debug.Log(agent.name);
+            //Debug.Log(agent.name);
 
             if (_siegerList.ContainsKey(agent))
             {
-                _openSurroundPositions.Add(_siegerList[agent]);
+                _openSiegePositions.Add(_siegerList[agent]);
                 _siegerList.Remove(agent);
             }
 
@@ -107,6 +153,8 @@ public class ObjectivePoint : MonoBehaviour
                 _openGuardPositions.Add(_guardList[agent]);
                 _guardList.Remove(agent);
             }
+            
+            agent.AgentDeathEvent -= OnAgentDeath;
         }
     }
 

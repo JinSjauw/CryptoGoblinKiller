@@ -3060,9 +3060,10 @@ MonoBehaviour:
   _chaseRadius: 45
   _attackRadius: 5
   _attackDelay: 1
-  _attackDamage: 15
+  _attackDamage: 1
   _corpseTimer: 4
   _state: 0
+  _lastState: 0
 --- !u!96 &9201108886769159598
 TrailRenderer:
   serializedVersion: 3

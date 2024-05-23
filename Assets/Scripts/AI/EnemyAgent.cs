@@ -57,12 +57,13 @@ public class EnemyAgent : MonoBehaviour
     private NavMeshAgent _agent;
     
     //Targets
-    private List<Transform> _targetList;
+    private Queue<Transform> _targetsQueue;
     private Transform _targetObjective;
     private int _targetIndex;
     
     private Transform _playerTransform;
     private Vector3 _targetDestination;
+    private Vector3 _objectiveDestination;
     
     //#TODO Temp vars, need to be split up into different classes later 
     
@@ -75,7 +76,7 @@ public class EnemyAgent : MonoBehaviour
 
     //State
     [SerializeField] private NPCStates _state;
-    private NPCStates _lastState;
+    [SerializeField] private NPCStates _lastState;
     
     //Animation
     private string _animationName;
@@ -133,7 +134,13 @@ public class EnemyAgent : MonoBehaviour
 
         if (_state == NPCStates.GUARDING)
         {
-            PlayAnimation(NPCStates.GUARDING);
+            Guarding(_objectiveDestination);
+        }
+
+        if (_state == NPCStates.IDLE)
+        {
+            _agent.isStopped = true;
+            PlayAnimation(NPCStates.IDLE);
         }
     }
 
@@ -143,7 +150,7 @@ public class EnemyAgent : MonoBehaviour
         
         _agent.isStopped = false;
         _state = NPCStates.MOVING;
-        Move(_targetObjective, _moveSpeed);
+        Move(_targetObjective.position, _moveSpeed);
     }
 
     #endregion
@@ -156,17 +163,42 @@ public class EnemyAgent : MonoBehaviour
         
         _playerTransform = playerTransform;
         _targetObjective = target;
-        _targetList = new List<Transform>(targetsList);
-        //_targetIndex = _targetList.IndexOf(_targetObjective);
+        _targetsQueue = new Queue<Transform>(targetsList);
         _objectPool = objectPool;
         
-        Move(_targetObjective, _moveSpeed);
+        ChangeState(NPCStates.MOVING);
+        Move(_targetObjective.position, _moveSpeed);
         _animator.Play("walk");
+
+        _agent.avoidancePriority = 50 + Random.Range(0, 4);
     }
     
     public bool IsInitialized()
     {
         return _isInitialized;
+    }
+    
+    public void SetObjectivePosition(Vector3 position, NPCStates state)
+    {
+        _objectiveDestination = position;
+        _agent.destination = position;
+        _state = state;
+    }
+
+    public void Stop()
+    {
+        _agent.isStopped = true;
+        ChangeState(NPCStates.IDLE);
+    }
+    
+    public void GoNextPoint()
+    {
+        ChangeState(NPCStates.MOVING);
+        
+        _targetsQueue.Enqueue(_targetObjective);
+        _targetObjective = _targetsQueue.Dequeue();
+        _objectiveDestination = _targetObjective.position;
+        Move(_objectiveDestination, _moveSpeed);
     }
     
     #endregion
@@ -198,6 +230,9 @@ public class EnemyAgent : MonoBehaviour
                 break;
             case NPCStates.GUARDING:
                 _animator.Play("idle_battle");
+                break;
+            case NPCStates.IDLE:
+                _animator.Play("idle");
                 break;
         }
     }
@@ -236,7 +271,16 @@ public class EnemyAgent : MonoBehaviour
     {
         //Debug.Log("In Attack Range");
         
-        if(_state == NPCStates.MOVING) return;
+        if(_state == NPCStates.MOVING || _state == NPCStates.GUARDING) return;
+
+        if (target.GetComponent<ObjectivePoint>() && _state != NPCStates.SIEGING)
+        {
+            if (_state != NPCStates.GUARDING)
+            {
+                GoNextPoint();
+                return;
+            }
+        }
         
         if (target.TryGetComponent(out HealthComponent healthComponent))
         {
@@ -250,7 +294,17 @@ public class EnemyAgent : MonoBehaviour
     private void ExitAttack()
     {
         _targetHealthComponent = null;
-        ChangeState(NPCStates.CHASING);
+        //ChangeState(_lastState);
+
+        if (_lastState == NPCStates.SIEGING || _lastState == NPCStates.GUARDING)
+        {
+            ChangeState(_lastState);
+            Move(_objectiveDestination, _moveSpeed);
+        }
+        else
+        {
+            ChangeState(NPCStates.CHASING);
+        }
     }
 
     #endregion
@@ -272,26 +326,15 @@ public class EnemyAgent : MonoBehaviour
     {
         if (target == _playerTransform)
         {
+            _targetDestination = target.position;
             ChangeState(NPCStates.CHASING);
         }
         else
         {
-            Move(target, _moveSpeed);
+            Move(target.position, _moveSpeed);
             ChangeState(NPCStates.MOVING);
         }
         //Debug.Log("Changing Target: " + target.name);
-    }
-    
-    public void SetObjectivePosition(Vector3 position, NPCStates state)
-    {
-        _agent.destination = position;
-        _state = state;
-    }
-
-    public void GoNextPoint()
-    {
-        _state = NPCStates.MOVING;
-        Move(_targetList[Random.Range(0, _targetList.Count - 1)], _moveSpeed);
     }
     
     #endregion
@@ -320,13 +363,12 @@ public class EnemyAgent : MonoBehaviour
     #region Action Execution
     
     //Change Agent Destination
-    private void Move(Transform target, float speed)
+    private void Move(Vector3 targetPosition, float speed)
     {
-        _targetDestination = target.position;
-        
         _agent.speed = speed;
-        _agent.SetDestination(_targetDestination);
+        _agent.SetDestination(targetPosition);
     }
+    
     
     private void Chase(Transform target, float interval)
     {
@@ -336,7 +378,7 @@ public class EnemyAgent : MonoBehaviour
         if (_chaseIntervalTimer > interval)
         {
             _chaseIntervalTimer = 0;
-            Move(target, _chaseSpeed);
+            Move(target.position, _chaseSpeed);
         }
         
         PlayAnimation(NPCStates.CHASING);
@@ -344,34 +386,42 @@ public class EnemyAgent : MonoBehaviour
         //Chase Stop Condition
         if (!CheckLineOfSight(_playerTransform) && CheckDistance(_playerTransform) > _chaseRadius || CheckDistance(_playerTransform) > _chaseRadius)
         {
-            ChangeTarget(_targetObjective);
+            if (_lastState == NPCStates.GUARDING)
+            {
+                Move(_objectiveDestination, _moveSpeed);
+                ChangeState(NPCStates.GUARDING);
+            }
+            else
+            {
+                ChangeTarget(_targetObjective);
+            }
         }
     }
     
     private void Attack(HealthComponent target, float damage, float interval)
     {
         if(target == null) return;
-
+        
         Vector3 targetPosition = target.transform.position;
         
         transform.LookAt(new Vector3(targetPosition.x, transform.position.y, targetPosition.z));
         
         if (target.Health <= 0)
         {
-            if (_targetList.Contains(_targetObjective))
+            if (_targetsQueue.Contains(_targetObjective))
             {
-                _targetList.Remove(_targetObjective);
+                //_targetList.Remove(_targetObjective);
             }
 
-            if (_targetList.Count > 0)
+            /*if (_targetList.Count > 0)
             {
-                _targetObjective = _targetList.First();
-                ChangeTarget(_targetObjective);
+                //_targetObjective = _targetList.First();
+                //ChangeTarget(_targetObjective);
             }
             else
             {
                 ChangeState(NPCStates.IDLE);
-            }
+            }*/
             
             _targetHealthComponent = null;
             
@@ -384,6 +434,19 @@ public class EnemyAgent : MonoBehaviour
             PlayAnimation(NPCStates.ATTACKING);
             _attackIntervalTimer = 0;
             target.TakeDamage(damage);
+        }
+    }
+
+    private void Guarding(Vector3 objectiveDestination)
+    {
+        if (Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(objectiveDestination.x, objectiveDestination.z)) > _agent.stoppingDistance)
+        {
+            PlayAnimation(NPCStates.MOVING);
+        }
+        else
+        {
+            //Debug.Log(gameObject.name + " Is Guarding!");
+            PlayAnimation(NPCStates.GUARDING);
         }
     }
     
