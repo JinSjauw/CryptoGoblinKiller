@@ -32,6 +32,11 @@ public class WeaponController : MonoBehaviour
         _inputHandler.WeaponChangeEvent += ChangeWeapon;
     }
 
+    private void Update()
+    {
+        _cameraController.CrossHairRay();
+    }
+
     private void ChangeWeapon(float state)
     {
         if (state >= 1)
@@ -59,11 +64,14 @@ public class WeaponController : MonoBehaviour
         if (Physics.Raycast(aimRay, out RaycastHit hit, _maxAimCheckDistance, _obstacleLayer))
         {
             direction = hit.point - _muzzleTransform.position;
+            Debug.DrawLine(_muzzleTransform.position, direction.normalized * hit.distance, Color.green, 2.5f);
         }
         else
         {
-            direction = (aimRay.origin + aimRay.direction * _maxAimCheckDistance) - _muzzleTransform.position;
+            direction = aimRay.origin + (aimRay.direction * _maxAimCheckDistance) - _muzzleTransform.position;
         }
+        
+        
         
         if (_isShotgun)
         {
