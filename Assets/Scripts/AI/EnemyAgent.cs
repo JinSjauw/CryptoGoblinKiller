@@ -259,7 +259,7 @@ public class EnemyAgent : MonoBehaviour
         }
     }
     
-    private void ExitChase()
+    private void ExitChase(Transform target)
     {
         if (!CheckLineOfSight(_playerTransform))
         {
@@ -284,14 +284,14 @@ public class EnemyAgent : MonoBehaviour
         
         if (target.TryGetComponent(out HealthComponent healthComponent))
         {
-            //Debug.Log("Attacking: " + healthComponent.name);
+            Debug.Log("Attacking: " + healthComponent.name);
             _targetHealthComponent = healthComponent;
             _attackIntervalTimer = 0;
             ChangeState(NPCStates.ATTACKING);
         }
     }
     
-    private void ExitAttack()
+    private void ExitAttack(Transform target)
     {
         _targetHealthComponent = null;
         //ChangeState(_lastState);

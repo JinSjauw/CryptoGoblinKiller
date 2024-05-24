@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -60,6 +61,14 @@ public class WeaponController : MonoBehaviour
     private float _reloadTimer;
 
     #region Unity Functions
+
+    private void Awake()
+    {
+        if (_objectPool == null)
+        {
+            _objectPool = FindObjectOfType<ObjectPool>();
+        }
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -195,6 +204,7 @@ public class WeaponController : MonoBehaviour
         {
             direction = hit.point - _muzzleTransform.position;
             Debug.DrawLine(_muzzleTransform.position, direction.normalized * hit.distance, Color.green, 2.5f);
+            Debug.Log("Hit: " + hit.collider.name);
         }
         else
         {

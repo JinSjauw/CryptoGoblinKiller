@@ -1435,7 +1435,7 @@ GameObject:
   - component: {fileID: 7609599104506315709}
   - component: {fileID: 4861410046304560110}
   - component: {fileID: 1840247535764750533}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: AttackSensor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1499,7 +1499,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5300299358386888243}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Eyes
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2033,7 +2033,7 @@ GameObject:
   - component: {fileID: 3164755218885050495}
   - component: {fileID: 7916787950209434991}
   - component: {fileID: 7928592741813470801}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: ChaseSensor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2795,7 +2795,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2235655917639034510}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Sensors
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3059,8 +3059,8 @@ MonoBehaviour:
   _chaseSpeed: 16
   _chaseRadius: 45
   _attackRadius: 5
-  _attackDelay: 1
-  _attackDamage: 1
+  _attackDelay: 0.5
+  _attackDamage: 6
   _corpseTimer: 4
   _state: 0
   _lastState: 0

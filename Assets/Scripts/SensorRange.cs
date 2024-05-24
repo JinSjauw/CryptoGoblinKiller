@@ -4,7 +4,7 @@ using UnityEngine.Events;
 public class SensorRange : MonoBehaviour
 {
     public UnityAction<Transform> OnEnterRange;
-    public UnityAction OnExitRange;
+    public UnityAction<Transform> OnExitRange;
     
     private SphereCollider _collider;
 
@@ -20,7 +20,7 @@ public class SensorRange : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        OnExitRange.Invoke();
+        OnExitRange.Invoke(other.transform);
     }
 
     public void SetRadius(float radius)

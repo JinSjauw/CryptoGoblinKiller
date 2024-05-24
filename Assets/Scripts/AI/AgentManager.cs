@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 using Random = UnityEngine.Random;
 
 public class AgentManager : MonoBehaviour
@@ -62,7 +63,17 @@ public class AgentManager : MonoBehaviour
         {
             _activeList.Add(agent);
             agent.AgentDeathEvent += OnAgentDeath;
-            agent.transform.position = position + Random.insideUnitSphere;
+            Vector2 randomOffset = Random.insideUnitCircle;
+
+            if (NavMesh.SamplePosition(position, out NavMeshHit hit, 1.5f, NavMesh.AllAreas))
+            {
+                agent.transform.position = new Vector3(hit.position.x + randomOffset.x, hit.position.y, hit.position.z + randomOffset.y);
+            }
+            else
+            {
+                Debug.Log("Couldnt find navmesh!");
+                return;
+            }
             
             if(agent.IsInitialized()) return;
 
