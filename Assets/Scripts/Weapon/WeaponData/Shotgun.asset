@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _damage: 20
   _muzzleVelocity: 200
-  _fireRate: 800
+  _fireRate: 450
   _reloadTime: 1.5
   _weaponType: 1
-  _magSize: 2
+  _magSize: 6
   _reserveAmmo: 24

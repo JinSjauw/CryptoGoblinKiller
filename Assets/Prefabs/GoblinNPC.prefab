@@ -3049,7 +3049,7 @@ MonoBehaviour:
   _animator: {fileID: 5310960371904275661}
   _obstacleMask:
     serializedVersion: 2
-    m_Bits: 448
+    m_Bits: 384
   _detectionRadius: 30
   _moveSpeed: 14
   _eyesTransform: {fileID: 5300299358386888243}

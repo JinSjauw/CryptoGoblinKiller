@@ -12,13 +12,13 @@ public class WallRunning : MonoBehaviour
 
     [Header("Wall Run Spring")] 
     [SerializeField] private SpringData _wallRunSpring;
-    [FormerlySerializedAs("_wallOffset")] [SerializeField] private float _wallOffsetLength;
+    [SerializeField] private float _wallOffsetLength;
     
     [Header("Wall Run")] 
     [SerializeField] private float _wallRunGravity;
     [SerializeField] private float _wallRunTime;
     [SerializeField] private float _wallCheckDistance;
-    [SerializeField] private float _wallForwardCheckDistance;
+    //[SerializeField] private float _wallForwardCheckDistance;
     [SerializeField] private float _wallRunSpeed;
     [SerializeField] private float _wallClimbSpeed;
 
@@ -91,7 +91,7 @@ public class WallRunning : MonoBehaviour
         Vector3 wallNormal = _right ? _wallRightHit.normal : _wallLeftHit.normal;
         Vector3 wallJumpForce;
         
-        wallJumpForce = transform.up * upForce + wallNormal * sideForce + _cameraController.CameraForward() * forwardForce;
+        wallJumpForce = transform.up * upForce + wallNormal * sideForce + _cameraController.GetCameraForward2D() * forwardForce;
         
         Vector3 currentVelocity = _rgBody.velocity;
         _rgBody.velocity = new Vector3(currentVelocity.x, 0, currentVelocity.z);
