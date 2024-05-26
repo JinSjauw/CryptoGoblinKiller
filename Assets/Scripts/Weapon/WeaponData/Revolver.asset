@@ -19,3 +19,4 @@ MonoBehaviour:
   _weaponType: 0
   _magSize: 6
   _reserveAmmo: 42
+  _recoilData: {fileID: 11400000, guid: dbcf3e092da1d234b878cd8a66ba89fc, type: 2}

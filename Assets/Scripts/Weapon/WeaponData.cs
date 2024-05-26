@@ -11,6 +11,8 @@ public class WeaponData : ScriptableObject
     [SerializeField] private int _magSize;
     [SerializeField] private int _reserveAmmo;
 
+    [SerializeField] private RecoilData _recoilData;
+    
     public float Damage => _damage;
     public float MuzzleVelocity => _muzzleVelocity;
     public float FireRate => _fireRate;
@@ -18,6 +20,7 @@ public class WeaponData : ScriptableObject
     public WeaponType WeaponType => _weaponType;
     public int MagSize => _magSize;
     public int ReserveAmmo => _reserveAmmo;
+    public RecoilData RecoilData => _recoilData;
 }
 
 public enum WeaponType

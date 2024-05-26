@@ -38,6 +38,7 @@ public class WeaponController : MonoBehaviour
     [SerializeField] private float _switchingTime;
 
     private WeaponRecoil _weaponRecoil;
+    private WeaponRecoilSpring _weaponRecoilSpring;
     
     private float _maxAimCheckDistance = 100;
     
@@ -72,6 +73,7 @@ public class WeaponController : MonoBehaviour
         }
 
         _weaponRecoil = GetComponentInChildren<WeaponRecoil>();
+        _weaponRecoilSpring = GetComponentInChildren<WeaponRecoilSpring>();
     }
 
     // Start is called before the first frame update
@@ -119,6 +121,8 @@ public class WeaponController : MonoBehaviour
             ChangeWeaponData(_revolverData);
             _muzzleFlash = _revolverMuzzleFlash;
             _muzzleTransform = _revolverMuzzleTransform;
+            
+            _weaponRecoil.ChangeWeapon(_revolverSpinAxis, _revolverData.RecoilData);
         }
         else if (state <= -1)
         {
@@ -130,6 +134,8 @@ public class WeaponController : MonoBehaviour
             ChangeWeaponData(_shotgunData);
             _muzzleFlash = _shotGunMuzzleFlash;
             _muzzleTransform = _shotgunMuzzleTransform;
+            
+            _weaponRecoil.ChangeWeapon(_shotgunSpinAxis, _shotgunData.RecoilData);
         }
 
         _canShoot = true;
@@ -169,7 +175,7 @@ public class WeaponController : MonoBehaviour
         while ( t  < duration )
         {
             t += Time.deltaTime;
-            target.localRotation = startRot * Quaternion.AngleAxis(t / duration * 360f, Vector3.up);
+            target.localRotation = startRot * Quaternion.AngleAxis(t / duration * 360f, Vector3.right);
             yield return null;
         }
         target.localRotation = startRot;
@@ -184,6 +190,8 @@ public class WeaponController : MonoBehaviour
         _weaponType = data.WeaponType;
         _magSize = data.MagSize;
         _reserveAmmo = data.ReserveAmmo;
+        
+        
     }
 
     private void CanShoot()
@@ -201,7 +209,14 @@ public class WeaponController : MonoBehaviour
     
     private void HandleShoot()
     {
+        //Play Recoil
+        
+        if(_weaponRecoil != null) _weaponRecoil.PlayRecoil();
+        if(_weaponRecoilSpring != null) _weaponRecoilSpring.PlayRecoil();
+        
+        //Play MuzzleFlash VFX
         _muzzleFlash.Play();
+        
         //Get direction to shoot in.
         Ray aimRay = _cameraController.CrossHairRay();
         Vector3 direction;
@@ -246,10 +261,6 @@ public class WeaponController : MonoBehaviour
             bullet.SetPool(_objectPool);
             bullet.Shoot(direction.normalized, _projectileVelocity, _projectileDamage);
         }
-        
-        //Play Recoil
-        _weaponRecoil.PlayRecoil();
-
     }
 
     #endregion
