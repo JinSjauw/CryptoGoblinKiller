@@ -10872,6 +10872,12 @@ Mesh:
     offset: 0
     size: 0
     path: 
+--- !u!4 &1343312958 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8919381982413553512, guid: f888b2a12b4ef5f4ca1798fe54fea895,
+    type: 3}
+  m_PrefabInstance: {fileID: 1932428208}
+  m_PrefabAsset: {fileID: 0}
 --- !u!43 &1348153869
 Mesh:
   m_ObjectHideFlags: 0
@@ -15180,6 +15186,30 @@ Mesh:
     offset: 0
     size: 0
     path: 
+--- !u!1 &1818764225 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2239185675896431652, guid: f888b2a12b4ef5f4ca1798fe54fea895,
+    type: 3}
+  m_PrefabInstance: {fileID: 1932428208}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1818764228
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1818764225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 319fb181249e97d4f8535233b7277ac8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _weaponHolder: {fileID: 1343312958}
+  _recoilX: 2
+  _recoilY: 2
+  _recoilZ: 2
+  _snappiness: 6
+  _returnSpeed: 2
 --- !u!43 &1819537626
 Mesh:
   m_ObjectHideFlags: 0
@@ -17388,6 +17418,11 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 1396678741}
+    - target: {fileID: 7533409800966400560, guid: f888b2a12b4ef5f4ca1798fe54fea895,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7561665040879785891, guid: f888b2a12b4ef5f4ca1798fe54fea895,
         type: 3}
       propertyPath: m_Mesh
@@ -17433,6 +17468,11 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 394307892}
+    - target: {fileID: 7694689302285813850, guid: f888b2a12b4ef5f4ca1798fe54fea895,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7729584259375779006, guid: f888b2a12b4ef5f4ca1798fe54fea895,
         type: 3}
       propertyPath: m_Mesh
@@ -17760,7 +17800,11 @@ PrefabInstance:
     - {fileID: 823606439004430290, guid: f888b2a12b4ef5f4ca1798fe54fea895, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 2239185675896431652, guid: f888b2a12b4ef5f4ca1798fe54fea895,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1818764228}
   m_SourcePrefab: {fileID: 100100000, guid: f888b2a12b4ef5f4ca1798fe54fea895, type: 3}
 --- !u!43 &1977080697
 Mesh:

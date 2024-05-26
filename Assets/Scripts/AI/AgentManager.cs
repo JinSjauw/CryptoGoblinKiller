@@ -49,8 +49,12 @@ public class AgentManager : MonoBehaviour
     {
         foreach (EnemyAgent agent in _activeList)
         {
+            agent.AgentDeathEvent -= OnAgentDeath;
             agent.GetComponent<HealthComponent>().TakeDamage(10000);
         }
+        
+        _activeList.Clear();
+        StartCoroutine(SpawnWave(_waveDelay));
     }
 
     #endregion

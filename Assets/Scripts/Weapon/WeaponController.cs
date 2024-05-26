@@ -36,6 +36,8 @@ public class WeaponController : MonoBehaviour
     
     [Header("Weapon Handling")] 
     [SerializeField] private float _switchingTime;
+
+    private WeaponRecoil _weaponRecoil;
     
     private float _maxAimCheckDistance = 100;
     
@@ -68,6 +70,8 @@ public class WeaponController : MonoBehaviour
         {
             _objectPool = FindObjectOfType<ObjectPool>();
         }
+
+        _weaponRecoil = GetComponentInChildren<WeaponRecoil>();
     }
 
     // Start is called before the first frame update
@@ -203,14 +207,15 @@ public class WeaponController : MonoBehaviour
         if (Physics.Raycast(aimRay, out RaycastHit hit, _maxAimCheckDistance, _obstacleLayer))
         {
             direction = hit.point - _muzzleTransform.position;
-            Debug.DrawLine(_muzzleTransform.position, direction.normalized * hit.distance, Color.green, 2.5f);
-            Debug.Log("Hit: " + hit.collider.name);
+            /*Debug.DrawLine(_muzzleTransform.position, direction.normalized * hit.distance, Color.green, 2.5f);
+            Debug.Log("Hit: " + hit.collider.name);*/
         }
         else
         {
             direction = aimRay.origin + (aimRay.direction * _maxAimCheckDistance) - _muzzleTransform.position;
         }
         
+        //Check if current weapon is shotgun.
         if (_weaponType == WeaponType.SHOTGUN)
         {
             _shotgunSpread.transform.forward = direction.normalized;
@@ -230,6 +235,7 @@ public class WeaponController : MonoBehaviour
             
             return;
         }
+        
         //Spawn bullet
         GameObject bulletObject = _objectPool.GetObject(_bulletPrefab);
         bulletObject.transform.position = _muzzleTransform.position;
@@ -238,6 +244,10 @@ public class WeaponController : MonoBehaviour
             bullet.SetPool(_objectPool);
             bullet.Shoot(direction.normalized, _projectileVelocity, _projectileDamage);
         }
+        
+        //Play Recoil
+        _weaponRecoil.PlayRecoil();
+
     }
 
     #endregion
