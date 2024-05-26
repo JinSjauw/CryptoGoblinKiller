@@ -1,11 +1,13 @@
 using System.Reflection;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class CameraController : MonoBehaviour
 {
     [Header("Component Refs")] 
     [SerializeField] private Transform _cameraHolder;
     [SerializeField] private RectTransform _crossHair;
+    [SerializeField] private Transform _lookDirection2D;
     
     [Header("Camera FOV")] 
     [SerializeField] private float _normalFOV;
@@ -110,8 +112,7 @@ public class CameraController : MonoBehaviour
         //Debug.Log(value);
         _playerCamera.transform.localRotation = Quaternion.Euler(0, 0, value);
     }
-
-
+    
     #region Public Functions
     
     public void ChangeFOV(CameraFOV fovState)
@@ -161,12 +162,21 @@ public class CameraController : MonoBehaviour
         _tiltSpringFrequency = spring.frequency;
         _tiltDampRatio = spring.dampingRatio;
     }
-    
+
+    public Vector3 GetCameraForward2D()
+    {
+        return _lookDirection2D.forward;
+    }
+
     public void RotateCamera(float horizontal, float vertical)
     {
-        Vector3 rotationVector = transform.right * vertical + transform.up * horizontal;
-
+        Vector3 upVector = transform.up;
+        Vector3 rightVector = transform.right;
+        
+        Vector3 rotationVector = rightVector * vertical + upVector * horizontal;
+        
         _cameraHolder.localEulerAngles = rotationVector;
+        _lookDirection2D.localRotation = Quaternion.AngleAxis(horizontal, upVector);
     }
 
     public Vector3 CameraForward()

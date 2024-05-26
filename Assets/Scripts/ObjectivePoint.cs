@@ -1,9 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
-using UnityEngine.Events;
-using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 public class ObjectivePoint : MonoBehaviour
@@ -78,6 +75,7 @@ public class ObjectivePoint : MonoBehaviour
             
             agent.AgentDeathEvent -= OnAgentDeath;
 
+            /*
             if (_openSiegePositions.Count > 0 && _guardList.Count > 0)
             {
                 EnemyAgent agentToSwap = _guardList.First().Key;
@@ -87,7 +85,7 @@ public class ObjectivePoint : MonoBehaviour
                 _openSiegePositions.Remove(surroundPosition);
                 agentToSwap.SetObjectivePosition(surroundPosition, NPCStates.SIEGING);
                 _siegerList.Add(agentToSwap, surroundPosition);
-            }
+            }*/
         }
     }
     
@@ -112,7 +110,7 @@ public class ObjectivePoint : MonoBehaviour
                 return;
             }
             
-            Debug.Log(agent.name);
+            //Debug.Log(agent.name);
 
             if (agent.State == NPCStates.CHASING || agent.State == NPCStates.ATTACKING)
             {
@@ -161,55 +159,6 @@ public class ObjectivePoint : MonoBehaviour
         }
     }
 
-    /*private void OnTriggerEnter(Collider other)
-    {
-        EnemyAgent agent = other.GetComponentInParent<EnemyAgent>();
-        
-        if(other.GetComponent<SensorRange>()) return;
-        
-        //Debug.Log(other.name);
-        
-        if (agent != null)
-        {
-            if(agent.State == NPCStates.CHASING || agent.State == NPCStates.ATTACKING) return;
-            
-            if(_siegerList.ContainsKey(agent) || _guardList.ContainsKey(agent)) return;
-            
-            if (_healthComponent.Health <= 0 || (_openGuardPositions.Count <= 0 && _openSiegePositions.Count <= 0))
-            {
-                agent.GoNextPoint();
-                //agent.Stop();
-                return;
-            }
-            
-            Debug.Log(agent.name);
-
-            if (agent.State == NPCStates.CHASING || agent.State == NPCStates.ATTACKING)
-            {
-                return;
-            }
-            
-            if (_openSiegePositions.Count > 0 && !_siegerList.ContainsKey(agent))
-            {
-                Vector3 surroundPosition = _openSiegePositions[Random.Range(0, _openSiegePositions.Count)];
-                
-                _openSiegePositions.Remove(surroundPosition);
-                agent.SetObjectivePosition(surroundPosition, NPCStates.SIEGING);
-                _siegerList.Add(agent, surroundPosition);
-            }
-            else if (_openGuardPositions.Count > 0 && !_guardList.ContainsKey(agent))
-            {
-                Vector3 guardPosition = _openGuardPositions[Random.Range(0, _openGuardPositions.Count)];
-                
-                _openGuardPositions.Remove(guardPosition); 
-                agent.SetObjectivePosition(guardPosition, NPCStates.GUARDING);
-                _guardList.Add(agent, guardPosition);
-            }
-            
-            agent.AgentDeathEvent += OnAgentDeath;
-        }
-    }*/
-
     private void OnAgentDeath(object sender, EnemyAgent deadAgent)
     {
         if (_siegerList.ContainsKey(deadAgent))
@@ -226,35 +175,6 @@ public class ObjectivePoint : MonoBehaviour
         
         deadAgent.AgentDeathEvent -= OnAgentDeath;
     }
-
-    /*private void OnTriggerExit(Collider other)
-    {
-        EnemyAgent agent = other.GetComponentInParent<EnemyAgent>();
-        
-        if(other.GetComponent<SensorRange>()) return;
-        //Debug.Log(other.name);
-        
-        if (agent != null)
-        {
-            //Debug.Log(agent.name);
-
-            if (_siegerList.ContainsKey(agent))
-            {
-                _openSiegePositions.Add(_siegerList[agent]);
-                _siegerList.Remove(agent);
-            }
-
-            if (_guardList.ContainsKey(agent))
-            {
-                _openGuardPositions.Add(_guardList[agent]);
-                _guardList.Remove(agent);
-            }
-            
-            agent.AgentDeathEvent -= OnAgentDeath;
-        }
-    }
-    */
-
     #endregion
 
     #region Private Functions

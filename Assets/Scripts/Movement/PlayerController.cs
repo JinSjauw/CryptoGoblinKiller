@@ -31,6 +31,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private bool _canDoubleJump;
     [SerializeField] private float _jumpDelay;
     [SerializeField] private float _jumpPower;
+    [SerializeField] private float _doubleJumpVerticalPower;
+    [SerializeField] private float _jumpStrafePower;
 
     [Header("Move")]
     //[SerializeField] private float _wallRunSpeed;
@@ -67,7 +69,14 @@ public class PlayerController : MonoBehaviour
     public bool IsWallRunning
     {
         get => _isWallRunning;
-        set => _isWallRunning = value; 
+        set
+        {
+            _isWallRunning = value;
+            if (_isWallRunning && !_canDoubleJump)
+            {
+                _canDoubleJump = true;
+            }
+        } 
     }
 
     public float Acceleration
@@ -130,7 +139,7 @@ public class PlayerController : MonoBehaviour
         
         RotatePlayer();
         GroundCheck();
-        
+
         if(_isSwinging) return;
         
         ApplyGravity();
@@ -206,10 +215,12 @@ public class PlayerController : MonoBehaviour
         if (RaycastUnderPlayer(_rideHeight, LayerMask.GetMask("Ground")))
         {
             _isGrounded = true;
+            if (!_canDoubleJump) _canDoubleJump = true;
         }
         else if(RaycastUnderPlayer(_rideHeight + _rideHeight / 2, LayerMask.GetMask("SlopedGround")))
         {
             _isGrounded = true;
+            if (!_canDoubleJump) _canDoubleJump = true;
         }
         else
         {
@@ -292,10 +303,22 @@ public class PlayerController : MonoBehaviour
         else if (!_isGrounded && _canJump && _canDoubleJump)
         {
             _isJumping = true;
-            _rgBody.velocity = new Vector3(velocity.x, 0, velocity.z);
-            _rgBody.AddForce(jumpForce, ForceMode.Impulse);
+            //_rgBody.velocity = new Vector3(velocity.x, 0, velocity.z);
+            Vector3 jumpDirection = transform.TransformDirection(
+                new Vector3
+                (
+                    _movementInput.x * _jumpStrafePower,
+                    _doubleJumpVerticalPower, 
+                    _movementInput.y * _jumpStrafePower
+                ));
+            
+            Vector3 doubleJumpForce = jumpDirection * _bodyMass;
+            //Vector3 neededJumpForce = (doubleJumpForce - _rgBody.velocity) / Time.fixedDeltaTime * _bodyMass;
+            _rgBody.velocity = Vector3.zero;
+            _rgBody.AddForce(doubleJumpForce, ForceMode.Impulse);
             //Log("Jumped!", "Jump()");
             _canJump = false;
+            _canDoubleJump = false;
         }
     }
     

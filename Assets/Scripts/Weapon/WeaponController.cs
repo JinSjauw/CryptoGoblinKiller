@@ -86,7 +86,7 @@ public class WeaponController : MonoBehaviour
 
     private void Update()
     {
-        _cameraController.CrossHairRay();
+        //_cameraController.CrossHairRay();
         CanShoot();
 
         if (_isReloading)
@@ -97,6 +97,7 @@ public class WeaponController : MonoBehaviour
                 _reloadTimer = 0;
                 _isReloading = false;
                 _currentAmmo = _magSize;
+                _canShoot = true;
             }
         }
     }
@@ -149,6 +150,7 @@ public class WeaponController : MonoBehaviour
     {
         if (!_isReloading)
         {
+            _canShoot = false;
             _isReloading = true;
             //Play Reload Anim;
             Transform target = _weaponType == WeaponType.REVOLVER ? _revolverSpinAxis : _shotgunSpinAxis;

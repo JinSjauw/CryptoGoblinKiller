@@ -284,7 +284,7 @@ public class EnemyAgent : MonoBehaviour
         
         if (target.TryGetComponent(out HealthComponent healthComponent))
         {
-            Debug.Log("Attacking: " + healthComponent.name);
+            //Debug.Log("Attacking: " + healthComponent.name);
             _targetHealthComponent = healthComponent;
             _attackIntervalTimer = 0;
             ChangeState(NPCStates.ATTACKING);
