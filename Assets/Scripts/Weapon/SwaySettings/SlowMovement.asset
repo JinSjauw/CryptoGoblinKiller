@@ -21,7 +21,7 @@ MonoBehaviour:
   rotationStep: 0.2
   maxRotationStep: 1.5
   bobOffset: 1
-  speedModifier: 0.75
+  speedModifier: 0.55
   travelLimit: {x: 0.01, y: 0.01, z: 0.03}
   bobLimit: {x: 0.01, y: 0.01, z: 0.01}
   bobRotation: 1

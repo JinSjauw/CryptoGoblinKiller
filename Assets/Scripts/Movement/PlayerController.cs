@@ -29,6 +29,8 @@ public class PlayerController : MonoBehaviour
     
     [Header("Jump")] 
     [SerializeField] private bool _canDoubleJump;
+    [SerializeField] private float _jumpBufferTime;
+    [SerializeField] private float _jumpCoyoteTime;
     [SerializeField] private float _jumpDelay;
     [SerializeField] private float _jumpPower;
     [SerializeField] private float _doubleJumpVerticalPower;
@@ -78,25 +80,26 @@ public class PlayerController : MonoBehaviour
             }
         } 
     }
-
-    public float Acceleration
-    {
-        set => _acceleration = value;
-    }
     
     public bool IsSwinging
     {
         get => _isSwinging;
         set => _isSwinging = value;
     }
+
+    public float CoyoteTime
+    {
+        get => _jumpCoyoteTime;
+    }
     
     //Private Timers
     private float _jumpTimer;
-    private float _velocityTime;
+    private float _jumpBufferTimer;
     
     //Input Variables
     private Vector2 _movementInput;
     private Vector2 _mouseInput;
+    private int _jumpInputBuffer;
     
     //Player transform
     private float _horizontalRotation;
@@ -154,6 +157,16 @@ public class PlayerController : MonoBehaviour
     {
         _mouseInput = Mouse.current.delta.value;
         LookAtMouse();
+
+        if (_jumpInputBuffer > 0)
+        {
+            _jumpBufferTimer += Time.deltaTime;
+            if (_jumpBufferTimer >= _jumpBufferTime)
+            {
+                _jumpInputBuffer = 0;
+                _jumpBufferTimer = 0;
+            }
+        }
         
         if (!_canJump)
         {
@@ -164,8 +177,15 @@ public class PlayerController : MonoBehaviour
                 _canJump = true;
                 _isJumping = false;
                 _jumpTimer = 0;
+
+                if (_jumpInputBuffer > 0)
+                {
+                    HandleJump();
+                    _jumpInputBuffer--;
+                }
             }
         }
+        
     }
 
     private void LateUpdate()
@@ -291,7 +311,7 @@ public class PlayerController : MonoBehaviour
         Vector3 jumpForce = transform.up * _jumpPower;
         jumpForce *= _bodyMass;
         
-        if ((_isGrounded) && _canJump)
+        if (_isGrounded)
         {
             _isJumping = true;
             //Reset rgBody velocity;
@@ -300,7 +320,7 @@ public class PlayerController : MonoBehaviour
             //Log("Jumped!", "Jump()");
             _canJump = false;
         }
-        else if (!_isGrounded && _canJump && _canDoubleJump)
+        else if (!_isGrounded && _canDoubleJump)
         {
             _isJumping = true;
             //_rgBody.velocity = new Vector3(velocity.x, 0, velocity.z);
@@ -426,7 +446,14 @@ public class PlayerController : MonoBehaviour
     private void Jump()
     {
         //Log("Jumped!", "Jump()");
-        HandleJump();
+        if (_canJump)
+        {
+            HandleJump();
+        }
+        else
+        {
+            _jumpInputBuffer++;
+        }
     }
     
     private void Sprint(bool isSprinting)

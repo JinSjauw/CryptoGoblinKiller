@@ -16041,6 +16041,16 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2134329474324169916, guid: f888b2a12b4ef5f4ca1798fe54fea895,
         type: 3}
+      propertyPath: _jumpBufferTime
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2134329474324169916, guid: f888b2a12b4ef5f4ca1798fe54fea895,
+        type: 3}
+      propertyPath: _jumpCoyoteTime
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 2134329474324169916, guid: f888b2a12b4ef5f4ca1798fe54fea895,
+        type: 3}
       propertyPath: _maxSprintSpeed
       value: 15
       objectReference: {fileID: 0}
@@ -16088,6 +16098,11 @@ PrefabInstance:
         type: 3}
       propertyPath: _projectilePrefabs.Array.size
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2414748577944281489, guid: f888b2a12b4ef5f4ca1798fe54fea895,
+        type: 3}
+      propertyPath: m_Name
+      value: UI
       objectReference: {fileID: 0}
     - target: {fileID: 2419024607931166449, guid: f888b2a12b4ef5f4ca1798fe54fea895,
         type: 3}
@@ -16144,6 +16159,11 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 625780134}
+    - target: {fileID: 2742206712336881933, guid: f888b2a12b4ef5f4ca1798fe54fea895,
+        type: 3}
+      propertyPath: m_ExcludeLayers.m_Bits
+      value: 2551
+      objectReference: {fileID: 0}
     - target: {fileID: 2748540072318303544, guid: f888b2a12b4ef5f4ca1798fe54fea895,
         type: 3}
       propertyPath: m_Mesh
@@ -16751,8 +16771,13 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5852255126166614174, guid: f888b2a12b4ef5f4ca1798fe54fea895,
         type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 3.17
+      objectReference: {fileID: 0}
+    - target: {fileID: 5852255126166614174, guid: f888b2a12b4ef5f4ca1798fe54fea895,
+        type: 3}
       propertyPath: m_LocalPosition.z
-      value: -15.118492
+      value: -14.79
       objectReference: {fileID: 0}
     - target: {fileID: 5874134532645631380, guid: f888b2a12b4ef5f4ca1798fe54fea895,
         type: 3}
@@ -17181,6 +17206,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8128970101049794693, guid: f888b2a12b4ef5f4ca1798fe54fea895,
         type: 3}
+      propertyPath: _wallRunExitTime
+      value: 0.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 8128970101049794693, guid: f888b2a12b4ef5f4ca1798fe54fea895,
+        type: 3}
       propertyPath: _wallOffsetLength
       value: 0.75
       objectReference: {fileID: 0}
@@ -17465,14 +17495,37 @@ PrefabInstance:
     - {fileID: 1610206431597132179, guid: f888b2a12b4ef5f4ca1798fe54fea895, type: 3}
     - {fileID: 823606439004430290, guid: f888b2a12b4ef5f4ca1798fe54fea895, type: 3}
     - {fileID: 1359734932062471950, guid: f888b2a12b4ef5f4ca1798fe54fea895, type: 3}
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 642268621758273344, guid: f888b2a12b4ef5f4ca1798fe54fea895, type: 3}
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 4869728157472981863, guid: f888b2a12b4ef5f4ca1798fe54fea895,
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 243399058}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 54535020224268478, guid: f888b2a12b4ef5f4ca1798fe54fea895,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1932428210}
   m_SourcePrefab: {fileID: 100100000, guid: f888b2a12b4ef5f4ca1798fe54fea895, type: 3}
+--- !u!1 &1932428209 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 54535020224268478, guid: f888b2a12b4ef5f4ca1798fe54fea895,
+    type: 3}
+  m_PrefabInstance: {fileID: 1932428208}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1932428210
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1932428209}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2d433f26cc449a4aaad3559fb83965a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!43 &1977080697
 Mesh:
   m_ObjectHideFlags: 0

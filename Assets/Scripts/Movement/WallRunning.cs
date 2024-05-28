@@ -18,9 +18,9 @@ public class WallRunning : MonoBehaviour
     [SerializeField] private float _wallRunGravity;
     [SerializeField] private float _wallRunTime;
     [SerializeField] private float _wallCheckDistance;
-    //[SerializeField] private float _wallForwardCheckDistance;
     [SerializeField] private float _wallRunSpeed;
     [SerializeField] private float _wallClimbSpeed;
+    [SerializeField] private float _wallRunExitTime;
 
     [Header("Wall Jump")] 
     [SerializeField] private float _wallJumpForwardForce;
@@ -38,6 +38,8 @@ public class WallRunning : MonoBehaviour
     
     private float _wallExitTimer;
     private float _wallRunTimer;
+    //private float _wallRunExitTimer;
+    private float _coyoteTimer;
 
     private RaycastHit _wallLeftHit;
     private RaycastHit _wallRightHit;
@@ -54,14 +56,14 @@ public class WallRunning : MonoBehaviour
     private Rigidbody _rgBody;
     private PlayerController _playerController;
     private CameraController _cameraController;
-    private SpringUtils.SpringMotionParams _springMotionParams;
+    //private SpringUtils.SpringMotionParams _springMotionParams;
     
     private void Awake()
     {
         _rgBody = GetComponent<Rigidbody>();
         _playerController = GetComponent<PlayerController>();
         _cameraController = transform.root.GetComponentInChildren<CameraController>();
-        _springMotionParams = new SpringUtils.SpringMotionParams();
+        //_springMotionParams = new SpringUtils.SpringMotionParams();
     }
 
     private void Start()
@@ -89,9 +91,7 @@ public class WallRunning : MonoBehaviour
         _exitingWall = true;
         
         Vector3 wallNormal = _right ? _wallRightHit.normal : _wallLeftHit.normal;
-        Vector3 wallJumpForce;
-        
-        wallJumpForce = transform.up * upForce + wallNormal * sideForce + _cameraController.GetCameraForward2D() * forwardForce;
+        Vector3 wallJumpForce = transform.up * upForce + wallNormal * sideForce + _cameraController.GetCameraForward2D() * forwardForce;
         
         Vector3 currentVelocity = _rgBody.velocity;
         _rgBody.velocity = new Vector3(currentVelocity.x, 0, currentVelocity.z);
@@ -167,19 +167,21 @@ public class WallRunning : MonoBehaviour
         }
         else
         {
-            _playerController.IsWallRunning = false;
+            //WallRunExitTimer
+            StopWallRun();
+            //_exitingWall = true;
             //_cameraController.ChangeTilt(CameraTilt.NEUTRAL);
         }
 
         if (_exitingWall)
         {
-            _playerController.IsWallRunning = false;
+            StopWallRun();
             
             if (!_playerController.IsSprinting)
             {
                 _cameraController.ChangeFOV(CameraFOV.NEUTRAL);
             }
-            
+                
             _cameraController.ChangeTilt(TiltState.NEUTRAL, _tiltSpring);
             
             _wallExitTimer += Time.fixedDeltaTime;
@@ -189,6 +191,16 @@ public class WallRunning : MonoBehaviour
                 _wallExitTimer = 0;
                 _exitingWall = false;
             }
+        }
+    }
+
+    private void StopWallRun()
+    {
+        _coyoteTimer += Time.fixedDeltaTime;
+        if (_coyoteTimer >= _playerController.CoyoteTime)
+        {
+            _playerController.IsWallRunning = false;
+            _coyoteTimer = 0;
         }
     }
     

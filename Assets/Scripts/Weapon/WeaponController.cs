@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.VFX;
 
 public class WeaponController : MonoBehaviour
@@ -36,7 +37,8 @@ public class WeaponController : MonoBehaviour
     
     [Header("Weapon Handling")] 
     [SerializeField] private float _switchingTime;
-
+    [SerializeField] private float _inputBufferTime;
+    
     private WeaponRecoil _weaponRecoil;
     private WeaponRecoilSpring _weaponRecoilSpring;
     
@@ -63,6 +65,10 @@ public class WeaponController : MonoBehaviour
     private bool _isReloading;
     private float _reloadTimer;
 
+    //Input buffer
+    private int _shootInputBuffer = 0;
+    private float _bufferTimer;
+    
     #region Unity Functions
 
     private void Awake()
@@ -74,6 +80,8 @@ public class WeaponController : MonoBehaviour
 
         _weaponRecoil = GetComponentInChildren<WeaponRecoil>();
         _weaponRecoilSpring = GetComponentInChildren<WeaponRecoilSpring>();
+
+        //_shootInputBuffer = new Queue<UnityAction>();
     }
 
     // Start is called before the first frame update
@@ -89,6 +97,16 @@ public class WeaponController : MonoBehaviour
     private void Update()
     {
         //_cameraController.CrossHairRay();
+        if (_shootInputBuffer > 0)
+        {
+            _bufferTimer += Time.deltaTime;
+            if (_bufferTimer >= _inputBufferTime)
+            {
+                _shootInputBuffer = 0;
+                _bufferTimer = 0;
+            }
+        }
+        
         CanShoot();
 
         if (_isReloading)
@@ -150,6 +168,11 @@ public class WeaponController : MonoBehaviour
             _canShoot = false;
             HandleShoot();
         }
+        else
+        {
+            //store and play next possible moment
+            _shootInputBuffer++;
+        }
     }
 
     private void Reload()
@@ -196,13 +219,19 @@ public class WeaponController : MonoBehaviour
 
     private void CanShoot()
     {
-        if (!_canShoot && _currentAmmo > 0)
+        if (!_canShoot && _currentAmmo > 0 && !_isReloading)
         {
             _fireTimer += Time.deltaTime;
             if (_fireTimer >= 60 / _fireRate)
             {
                 _fireTimer = 0;
                 _canShoot = true;
+
+                if (_shootInputBuffer > 0)
+                {
+                    _shootInputBuffer--;
+                    Shoot();
+                }
             }
         }
     }
