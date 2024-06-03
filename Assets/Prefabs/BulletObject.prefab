@@ -51,6 +51,8 @@ MonoBehaviour:
     type: 3}
   _pelletImpactVFX: {fileID: 8943143273360834807, guid: bcefcfb8c375b5341962f373654f1d62,
     type: 3}
+  _bloodBurstVFX: {fileID: 229921702431144312, guid: 11267dfdd250e0443a55cb2c104ab38c,
+    type: 3}
   _bulletMask:
     serializedVersion: 2
     m_Bits: 1472

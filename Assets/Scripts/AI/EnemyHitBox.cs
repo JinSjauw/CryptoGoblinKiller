@@ -1,12 +1,12 @@
+using System;
 using System.Collections;
 using UnityEngine;
-using UnityEngine.VFX;
 
 public class EnemyHitBox : MonoBehaviour
 {
     [SerializeField] private bool _resetHead;
     [SerializeField] private HitBoxType _type;
-    [SerializeField] private VisualEffect _hitFX;
+    [SerializeField] private GameObject _hitVFX;
 
     [SerializeField] private SpringData _headSpringData;
     [SerializeField] private float _targetHeadScale;
@@ -16,16 +16,14 @@ public class EnemyHitBox : MonoBehaviour
     private float _headScale;
     private float _headScaleDelta;
 
-    private HealthComponent _healthComponent;
+    public EventHandler<EnemyHit> onHitEvent; 
     
     private void Awake()
     {
         _headScale = 1;
         _springMotionParams = new SpringUtils.SpringMotionParams();
-
-        _healthComponent = GetComponentInParent<HealthComponent>();
     }
-
+    
     private void Update()
     {
         if (_animateHead)
@@ -46,6 +44,13 @@ public class EnemyHitBox : MonoBehaviour
         }
     }
 
+    private void OnDisable()
+    {
+        transform.localScale = Vector3.one;
+        _headScale = 1;
+        _hitVFX.SetActive(false);
+    }
+
     private IEnumerator ResetHead(float waitTime)
     {
         yield return new WaitForSeconds(waitTime);
@@ -56,21 +61,18 @@ public class EnemyHitBox : MonoBehaviour
     
     public void Hit(float damage)
     {
-        _healthComponent.TakeDamage(damage, _type);
+        onHitEvent?.Invoke(null, new EnemyHit(damage, _type, this));
+    }
+
+    public void AnimateHead()
+    {
+        if (!_animateHead)
+        {
+            _headScale += .25f;
+            _animateHead = true;
+        }
         
-        //_hitFX.Play();
-        if (_type == HitBoxType.HEAD)
-        {
-            if (!_animateHead)
-            {
-                _headScale += .25f;
-                _animateHead = true;
-            }
-        }
-        else
-        {
-            //_hitFX.Play();
-        }
+        _hitVFX.SetActive(true);
     }
     
 }

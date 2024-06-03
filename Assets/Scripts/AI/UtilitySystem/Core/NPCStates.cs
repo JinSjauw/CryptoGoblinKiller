@@ -5,4 +5,6 @@ public enum NPCStates
     CHASING = 2,
     ATTACKING = 3, 
     DEAD = 4,
+    SIEGING = 5,
+    GUARDING = 6,
 }
