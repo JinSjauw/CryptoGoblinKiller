@@ -80,6 +80,15 @@ public partial class @StandardInput: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Shoot"",
+                    ""type"": ""Button"",
+                    ""id"": ""4294dfd7-aa2d-4e62-a124-1663a17c994b"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -163,7 +172,7 @@ public partial class @StandardInput: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""04cb9166-6a21-43ea-ad16-2bb2c1ee809a"",
-                    ""path"": ""<Mouse>/leftButton"",
+                    ""path"": ""<Mouse>/rightButton"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -192,6 +201,17 @@ public partial class @StandardInput: IInputActionCollection2, IDisposable
                     ""action"": ""ShortenRope"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""99603a1d-c522-43dc-b959-5b4a83c990f4"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Shoot"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -206,6 +226,7 @@ public partial class @StandardInput: IInputActionCollection2, IDisposable
         m_Gameplay_Grapple = m_Gameplay.FindAction("Grapple", throwIfNotFound: true);
         m_Gameplay_ExtendRope = m_Gameplay.FindAction("ExtendRope", throwIfNotFound: true);
         m_Gameplay_ShortenRope = m_Gameplay.FindAction("ShortenRope", throwIfNotFound: true);
+        m_Gameplay_Shoot = m_Gameplay.FindAction("Shoot", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -273,6 +294,7 @@ public partial class @StandardInput: IInputActionCollection2, IDisposable
     private readonly InputAction m_Gameplay_Grapple;
     private readonly InputAction m_Gameplay_ExtendRope;
     private readonly InputAction m_Gameplay_ShortenRope;
+    private readonly InputAction m_Gameplay_Shoot;
     public struct GameplayActions
     {
         private @StandardInput m_Wrapper;
@@ -283,6 +305,7 @@ public partial class @StandardInput: IInputActionCollection2, IDisposable
         public InputAction @Grapple => m_Wrapper.m_Gameplay_Grapple;
         public InputAction @ExtendRope => m_Wrapper.m_Gameplay_ExtendRope;
         public InputAction @ShortenRope => m_Wrapper.m_Gameplay_ShortenRope;
+        public InputAction @Shoot => m_Wrapper.m_Gameplay_Shoot;
         public InputActionMap Get() { return m_Wrapper.m_Gameplay; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -310,6 +333,9 @@ public partial class @StandardInput: IInputActionCollection2, IDisposable
             @ShortenRope.started += instance.OnShortenRope;
             @ShortenRope.performed += instance.OnShortenRope;
             @ShortenRope.canceled += instance.OnShortenRope;
+            @Shoot.started += instance.OnShoot;
+            @Shoot.performed += instance.OnShoot;
+            @Shoot.canceled += instance.OnShoot;
         }
 
         private void UnregisterCallbacks(IGameplayActions instance)
@@ -332,6 +358,9 @@ public partial class @StandardInput: IInputActionCollection2, IDisposable
             @ShortenRope.started -= instance.OnShortenRope;
             @ShortenRope.performed -= instance.OnShortenRope;
             @ShortenRope.canceled -= instance.OnShortenRope;
+            @Shoot.started -= instance.OnShoot;
+            @Shoot.performed -= instance.OnShoot;
+            @Shoot.canceled -= instance.OnShoot;
         }
 
         public void RemoveCallbacks(IGameplayActions instance)
@@ -357,5 +386,6 @@ public partial class @StandardInput: IInputActionCollection2, IDisposable
         void OnGrapple(InputAction.CallbackContext context);
         void OnExtendRope(InputAction.CallbackContext context);
         void OnShortenRope(InputAction.CallbackContext context);
+        void OnShoot(InputAction.CallbackContext context);
     }
 }
