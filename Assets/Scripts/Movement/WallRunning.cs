@@ -4,8 +4,9 @@ using UnityEngine.Serialization;
 [RequireComponent(typeof(PlayerController))]
 public class WallRunning : MonoBehaviour
 {
-    [Header("Input Handler")] 
+    [Header("Object Refs")] 
     [SerializeField] private InputHandler _inputHandler;
+    [SerializeField] private PlayerEventChannel _playerEventChannel;
     
     [Header("Walls To Run")] 
     [SerializeField] private LayerMask _wallMask;
@@ -87,7 +88,9 @@ public class WallRunning : MonoBehaviour
         if (!_playerController.IsWallRunning) return;
         if(!_playerController.CanJump) return;
         if(_playerController.IsJumping) return;
-
+    
+        _playerEventChannel.OnPlayerJump();
+        
         _exitingWall = true;
         
         Vector3 wallNormal = _right ? _wallRightHit.normal : _wallLeftHit.normal;

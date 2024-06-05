@@ -10,6 +10,7 @@ public class PlayerController : MonoBehaviour
 {
     [Header("Object Refs")]
     [SerializeField] private InputHandler _inputHandler;
+    [SerializeField] private PlayerEventChannel _playerEventChannel;
     [SerializeField] private Transform _cameraAnchor;
     [SerializeField] private CameraController _cameraController;
     [SerializeField] private WeaponTransformController weaponTransformController; // to be removed. will use events in the future
@@ -234,11 +235,13 @@ public class PlayerController : MonoBehaviour
     {
         if (RaycastUnderPlayer(_rideHeight, LayerMask.GetMask("Ground")))
         {
+            if (!_isGrounded && !_isJumping) _playerEventChannel.OnPlayerLand();
             _isGrounded = true;
             if (!_canDoubleJump) _canDoubleJump = true;
         }
         else if(RaycastUnderPlayer(_rideHeight + _rideHeight / 2, LayerMask.GetMask("SlopedGround")))
         {
+            if (!_isGrounded && !_isJumping) _playerEventChannel.OnPlayerLand();
             _isGrounded = true;
             if (!_canDoubleJump) _canDoubleJump = true;
         }
@@ -315,6 +318,7 @@ public class PlayerController : MonoBehaviour
         {
             _isJumping = true;
             //Reset rgBody velocity;
+            _playerEventChannel.OnPlayerJump();
             _rgBody.velocity = new Vector3(velocity.x, 0, velocity.z);
             _rgBody.AddForce(jumpForce, ForceMode.Impulse);
             //Log("Jumped!", "Jump()");

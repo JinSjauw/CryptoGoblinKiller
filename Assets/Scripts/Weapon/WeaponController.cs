@@ -9,6 +9,7 @@ public class WeaponController : MonoBehaviour
 {
     [Header("Object Refs")]
     [SerializeField] private InputHandler _inputHandler;
+    [SerializeField] private WeaponEventChannel _weaponEventChannel;
     [SerializeField] private ObjectPool _objectPool;
     [SerializeField] private Rigidbody _playerBody;
     [SerializeField] private CameraController _cameraController;
@@ -80,8 +81,6 @@ public class WeaponController : MonoBehaviour
 
         _weaponRecoil = GetComponentInChildren<WeaponRecoil>();
         _weaponRecoilSpring = GetComponentInChildren<WeaponRecoilSpring>();
-
-        //_shootInputBuffer = new Queue<UnityAction>();
     }
 
     // Start is called before the first frame update
@@ -155,7 +154,9 @@ public class WeaponController : MonoBehaviour
             
             _weaponRecoil.ChangeWeapon(_shotgunSpinAxis, _shotgunData.RecoilData);
         }
-
+        
+        _weaponEventChannel.OnWeaponChange(_weaponType);
+        
         _canShoot = true;
         _currentAmmo = _magSize;
     }
@@ -166,7 +167,13 @@ public class WeaponController : MonoBehaviour
         {
             _currentAmmo--;
             _canShoot = false;
+            
+            _weaponEventChannel.OnFire(_currentAmmo);
             HandleShoot();
+        }
+        else if (!_isReloading && _currentAmmo <= 0)
+        {
+            _weaponEventChannel.OnDryFire();
         }
         else
         {
@@ -179,6 +186,7 @@ public class WeaponController : MonoBehaviour
     {
         if (!_isReloading)
         {
+            _weaponEventChannel.OnReloadStart(_magSize);
             _canShoot = false;
             _isReloading = true;
             //Play Reload Anim;

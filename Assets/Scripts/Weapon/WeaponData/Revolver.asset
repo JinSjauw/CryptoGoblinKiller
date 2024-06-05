@@ -15,7 +15,7 @@ MonoBehaviour:
   _damage: 65
   _muzzleVelocity: 400
   _fireRate: 350
-  _reloadTime: 1.33
+  _reloadTime: 0.56
   _weaponType: 0
   _magSize: 6
   _reserveAmmo: 42
