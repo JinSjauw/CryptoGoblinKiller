@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class HealthComponent : MonoBehaviour
 {
@@ -9,11 +10,12 @@ public class HealthComponent : MonoBehaviour
     [Header("Health")]
     [SerializeField] private float _maxHealth;
     [SerializeField] private float _health;
-    //[SerializeField] private GameObject _vfxObject;
     
     public event EventHandler DeathEvent;
+    public event UnityAction<float, float> HealthChangeEvent;
+    
     public float Health => _health;
-
+    
     public void TakeDamage(float damage, HitBoxType type = HitBoxType.DEFAULT)
     {
         float actualDamage = damage;
@@ -24,6 +26,8 @@ public class HealthComponent : MonoBehaviour
         }
         
         _health -= actualDamage;
+        
+        HealthChangeEvent?.Invoke(_health, _maxHealth);
 
         if(_playerEventChannel != null) _playerEventChannel.OnHealthChanged(_health);
         
@@ -31,6 +35,11 @@ public class HealthComponent : MonoBehaviour
         {
             DeathEvent?.Invoke(this, EventArgs.Empty);
         }
+    }
+
+    private void Awake()
+    {
+        _health = _maxHealth;
     }
 
     private void OnDisable()

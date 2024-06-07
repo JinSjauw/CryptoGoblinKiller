@@ -30,6 +30,11 @@ public class InputHandler : ScriptableObject, StandardInput.IGameplayActions
         _input.Gameplay.SetCallbacks(this);
     }
 
+    public void DisableGameplayInput()
+    {
+        _input.Gameplay.Disable();
+    }
+    
     public void OnMove(InputAction.CallbackContext context)
     {
         if (context.performed)

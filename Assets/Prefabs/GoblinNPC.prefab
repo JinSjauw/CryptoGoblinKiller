@@ -2487,7 +2487,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071067}
   m_LocalPosition: {x: -0, y: 0.87, z: -0.41434}
-  m_LocalScale: {x: 64.29621, y: 65.29341, z: 49.43188}
+  m_LocalScale: {x: 65, y: 65, z: 65}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2525135687011883034}
@@ -2981,7 +2981,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -220.13, y: 0, z: -26.88}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1, y: 0.7, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2235655917639034510}
@@ -3059,8 +3059,8 @@ MonoBehaviour:
   _chaseSpeed: 16
   _chaseRadius: 45
   _attackRadius: 5
-  _attackDelay: 0.5
-  _attackDamage: 6
+  _attackDelay: 1
+  _attackDamage: 15
   _corpseTimer: 4
   _state: 0
   _lastState: 0
@@ -3180,6 +3180,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28c3e01db53ef5144b1496b7ed632190, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _playerEventChannel: {fileID: 0}
   _maxHealth: 150
   _health: 150
 --- !u!114 &2605215299403645605

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using Random = UnityEngine.Random;
 
 public class ObjectivePoint : MonoBehaviour
@@ -14,6 +15,11 @@ public class ObjectivePoint : MonoBehaviour
     [SerializeField] private int _maxGuarding;
     [SerializeField] private float _guardRadius;
 
+    public Guid ID { get; } = Guid.NewGuid();
+    
+    public UnityAction<float, float, Guid> ObjectiveHealthChangedEvent;
+    public UnityAction ObjectiveDestructionEvent;
+    
     private HealthComponent _healthComponent;
     private SensorRange _sensorRange;
     
@@ -46,6 +52,7 @@ public class ObjectivePoint : MonoBehaviour
     private void Start()
     {
         _healthComponent.DeathEvent += OnDestruction;
+        _healthComponent.HealthChangeEvent += OnHealthChange;
         _sensorRange.OnEnterRange += OnEnterRange;
         _sensorRange.OnExitRange += OnExitRange;
     }
@@ -157,6 +164,13 @@ public class ObjectivePoint : MonoBehaviour
             agent.GoNextPoint();
             agent.AgentDeathEvent -= OnAgentDeath;
         }
+        
+        ObjectiveDestructionEvent?.Invoke();
+    }
+    
+    private void OnHealthChange(float health, float maxHealth)
+    {
+        ObjectiveHealthChangedEvent?.Invoke(health, maxHealth, ID);
     }
 
     private void OnAgentDeath(object sender, EnemyAgent deadAgent)

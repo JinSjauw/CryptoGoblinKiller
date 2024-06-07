@@ -31,8 +31,6 @@ public class AgentManager : MonoBehaviour
     private void Awake()
     {
         _objectPool = FindObjectOfType<ObjectPool>();
-        
-        //Find Object pool, otherwise create one?
     }
 
     // Start is called before the first frame update
