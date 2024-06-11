@@ -4,6 +4,7 @@ using System.Xml;
 using Ami.BroAudio;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class HUDController : MonoBehaviour
@@ -14,15 +15,19 @@ public class HUDController : MonoBehaviour
     [SerializeField] private PlayerEventChannel _playerEventChannel;
     [SerializeField] private WeaponEventChannel _weaponEventChannel;
     [SerializeField] private ObjectiveEventChannel _objectiveEventChannel;
-
+    [SerializeField] private WaveEventChannel _waveEventChannel;
+    
     [Header("UI Object Refs")]
     [SerializeField] private Image _healthBar;
     [SerializeField] private Image _shotgunIcon;
     [SerializeField] private Image _revolverIcon;
-    [SerializeField] private TextMeshProUGUI ammoCounter;
+    [SerializeField] private TextMeshProUGUI _ammoCounter;
     [SerializeField] private Transform _objectiveUIContainer;
     [SerializeField] private Transform _loseScreen;
-    
+    [SerializeField] private Transform _winScreen;
+    [SerializeField] private TextMeshProUGUI _waveCounter;
+    [SerializeField] private TextMeshProUGUI _waveTimer;
+        
     [Header("UI Prefabs")] 
     [SerializeField] private Transform _objectiveUIPrefab;
     
@@ -30,6 +35,8 @@ public class HUDController : MonoBehaviour
     
     private int _maxHealth = 250;
     private int _maxAmmo = 6;
+    
+    private float _waveTime;
     
     private void Start()
     {
@@ -47,6 +54,36 @@ public class HUDController : MonoBehaviour
         _objectiveEventChannel.HealthChangedEvent += ObjectiveHealthChanged;
 
         _objectiveEventChannel.LoseEvent += OnLose;
+
+        _waveEventChannel.NewWaveEvent += NewWaveSpawned;
+        _waveEventChannel.WavesClearedEvent += OnWin;
+    }
+
+    private void Update()
+    {
+        if (_waveTime <= 0)
+        {
+            _waveTimer.text = "00:00";
+            return;
+        }
+
+        _waveTime -= Time.deltaTime;
+
+        float minutes = Mathf.FloorToInt(_waveTime / 60);
+        float seconds = Mathf.FloorToInt(_waveTime % 60);
+
+        _waveTimer.text = string.Format("{0:00}:{1:00}", minutes, seconds);
+    }
+
+    private void OnWin()
+    {
+        _winScreen.gameObject.SetActive(true);
+    }
+    
+    private void NewWaveSpawned(int waveNumber, int maxWaves, float waveTime)
+    {
+        _waveCounter.text = "Wave: " + waveNumber + "/" + maxWaves;
+        _waveTime = waveTime;
     }
 
     //Temp
@@ -73,13 +110,13 @@ public class HUDController : MonoBehaviour
 
     private void WeaponReload(int maxAmmo)
     {
-        ammoCounter.text = maxAmmo + "/" + maxAmmo;
+        _ammoCounter.text = maxAmmo + "/" + maxAmmo;
         _maxAmmo = maxAmmo;
     }
 
     private void WeaponFire(int ammo)
     {
-        ammoCounter.text = ammo + "/" + _maxAmmo;
+        _ammoCounter.text = ammo + "/" + _maxAmmo;
     }
 
     private void WeaponChanged(WeaponType type)

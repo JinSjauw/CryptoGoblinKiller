@@ -7,6 +7,7 @@ using Random = UnityEngine.Random;
 
 public class AgentManager : MonoBehaviour
 {
+    [SerializeField] private WaveEventChannel _waveEventChannel;
     [SerializeField] private GameObject _agentPrefab;
 
     [SerializeField] private Transform _playerTransform;
@@ -16,15 +17,17 @@ public class AgentManager : MonoBehaviour
     [SerializeField] private List<Enemy> _activeList;
     
     //Wave Settings
-    
+    [SerializeField] private WaveSpawnType _waveSpawnType;
     [SerializeField] private int _waveAmount;
     [SerializeField] private int _waveDelay;
-    
     [SerializeField] private int _enemyAmount;
+
+    [SerializeField] private float _timeBetweenWaves;
     
     private ObjectPool _objectPool;
 
-    [SerializeField] private int _waveNumber;
+    private int _waveNumber;
+    [SerializeField] private float _waveTimer;
     
     #region Unity Functions
 
@@ -36,7 +39,24 @@ public class AgentManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        StartCoroutine(SpawnWave(_waveDelay));
+        _waveEventChannel.OnNewWave(_waveNumber + 1, _waveAmount, _waveDelay);
+        StartCoroutine(SpawnWave(_waveDelay, () =>
+        {
+            _waveEventChannel.OnNewWave(_waveNumber + 1, _waveAmount, _timeBetweenWaves);
+        }));
+    }
+
+    private void Update()
+    {
+        if(_waveSpawnType != WaveSpawnType.ONTIMER) return;
+        
+        _waveTimer += Time.deltaTime;
+        if (_waveTimer > _timeBetweenWaves)
+        {
+            _waveEventChannel.OnNewWave(_waveNumber + 1, _waveAmount, _timeBetweenWaves);
+            _waveTimer = 0;
+            StartCoroutine(SpawnWave());
+        }
     }
 
     #endregion
@@ -97,14 +117,19 @@ public class AgentManager : MonoBehaviour
             _activeList.Remove(enemy);
             
             //Spawn new Wave?
-            if (_activeList.Count == 0 && _waveNumber < _waveAmount)
+            if (_activeList.Count == 0 && _waveNumber < _waveAmount && _waveSpawnType == WaveSpawnType.ONCLEAR)
             {
                 StartCoroutine(SpawnWave(_waveDelay));
+            }
+
+            if (_activeList.Count == 0 && _waveNumber >= _waveAmount)
+            {
+                _waveEventChannel.OnWavesCleared();
             }
         }
     }
 
-    private IEnumerator SpawnWave(float delay = 0)
+    private IEnumerator SpawnWave(float delay = 0, Action onWaveSpawn = null)
     {
         _waveNumber++;
         
@@ -121,8 +146,16 @@ public class AgentManager : MonoBehaviour
             }
         }
 
+        onWaveSpawn?.Invoke();
+        
         yield return null;
     }
 
     #endregion
+}
+
+public enum WaveSpawnType
+{
+    ONCLEAR = 0,
+    ONTIMER = 1,
 }
