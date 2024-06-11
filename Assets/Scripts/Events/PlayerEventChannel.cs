@@ -13,7 +13,10 @@ public class PlayerEventChannel : ScriptableObject
 
     public UnityAction PlayerJumpEvent;
     public UnityAction PlayerLandEvent;
-    
+
+    public UnityAction PlayerWallRunStartEvent;
+    public UnityAction PlayerWallRunStopEvent;
+
     public void OnHealthChanged(float health)
     {
         ChangedHealthEvent?.Invoke(health);
@@ -52,5 +55,15 @@ public class PlayerEventChannel : ScriptableObject
     public void OnPlayerLand()
     {
         PlayerLandEvent?.Invoke();
+    }
+
+    public void OnPlayerWallRunStart()
+    {
+        PlayerWallRunStartEvent?.Invoke();
+    }
+
+    public void OnPlayerWallRunStop()
+    {
+        PlayerWallRunStopEvent?.Invoke();
     }
 }

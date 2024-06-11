@@ -119917,6 +119917,7 @@ MonoBehaviour:
     type: 2}
   _maxHealth: 250
   _health: 250
+  _healingRate: 0.5
 --- !u!136 &2189184142340265598
 CapsuleCollider:
   m_ObjectHideFlags: 0

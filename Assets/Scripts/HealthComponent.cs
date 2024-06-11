@@ -10,12 +10,48 @@ public class HealthComponent : MonoBehaviour
     [Header("Health")]
     [SerializeField] private float _maxHealth;
     [SerializeField] private float _health;
+    [SerializeField] private float _healingRate;
     
+    private bool _canRecharge;
+    private float _startHealthHeal;
+    private float _healingAlpha;
+
     public event EventHandler DeathEvent;
     public event UnityAction<float, float> HealthChangeEvent;
     
     public float Health => _health;
+
+    private void Start()
+    {
+        if(_playerEventChannel == null) return;
+
+        _playerEventChannel.PlayerWallRunStartEvent += StartWallRecharge;
+        _playerEventChannel.PlayerWallRunStopEvent += StopWallRecharge;
+    }
+
+    private void Update()
+    {
+        if (_canRecharge)
+        {
+            //Lerp current health to max;
+            _healingAlpha = Mathf.MoveTowards(_healingAlpha, 1, _healingRate * Time.deltaTime);
+            _health = Mathf.Lerp(0, _maxHealth,_healingAlpha);
+            _playerEventChannel.OnHealthChanged(_health);
+        }
+    }
+
+    private void StartWallRecharge()
+    {
+        _startHealthHeal = _health;
+        _healingAlpha = _health / _maxHealth;
+        _canRecharge = true;
+    }
     
+    private void StopWallRecharge()
+    {
+        _canRecharge = false;
+    }
+
     public void TakeDamage(float damage, HitBoxType type = HitBoxType.DEFAULT)
     {
         float actualDamage = damage;
@@ -27,9 +63,15 @@ public class HealthComponent : MonoBehaviour
         
         _health -= actualDamage;
         
-        HealthChangeEvent?.Invoke(_health, _maxHealth);
 
-        if(_playerEventChannel != null) _playerEventChannel.OnHealthChanged(_health);
+        if (_playerEventChannel != null)
+        {
+            _playerEventChannel.OnHealthChanged(_health);
+        }
+        else
+        {
+            HealthChangeEvent?.Invoke(_health, _maxHealth);
+        }
         
         if (_health <= 0)
         {

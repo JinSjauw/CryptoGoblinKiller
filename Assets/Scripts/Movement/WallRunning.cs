@@ -150,6 +150,8 @@ public class WallRunning : MonoBehaviour
                 
                 if(_right) _cameraController.ChangeTilt(TiltState.RIGHT, _tiltSpring, _tiltAmount);
                 if(_left) _cameraController.ChangeTilt(TiltState.LEFT, _tiltSpring, _tiltAmount);
+                
+                _playerEventChannel.OnPlayerWallRunStart();
             }
 
             WallRun();
@@ -202,6 +204,7 @@ public class WallRunning : MonoBehaviour
         _coyoteTimer += Time.fixedDeltaTime;
         if (_coyoteTimer >= _playerController.CoyoteTime)
         {
+            _playerEventChannel.OnPlayerWallRunStop();
             _playerController.IsWallRunning = false;
             _coyoteTimer = 0;
         }
