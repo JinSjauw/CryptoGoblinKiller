@@ -116,7 +116,7 @@ public class AgentManager : MonoBehaviour
         {
             for (int j = 0; j < enemyPerPoint; j++)
             {
-                Debug.Log(i + " " + j + " Enemy per Point: " + enemyPerPoint);
+                //Debug.Log(i + " " + j + " Enemy per Point: " + enemyPerPoint);
                 SpawnAgent(_spawnPoints[i].position);
             }
         }
