@@ -126,6 +126,16 @@ public class AgentManager : MonoBehaviour
             {
                 _waveEventChannel.OnWavesCleared();
             }
+
+            if (_activeList.Count == 0 && _waveNumber <= _waveAmount && _waveTimer < _timeBetweenWaves && _waveSpawnType == WaveSpawnType.ONTIMER)
+            {
+                _waveEventChannel.OnNewWave(_waveNumber + 1, _waveAmount, _waveDelay);
+                _waveTimer = 0;
+                StartCoroutine(SpawnWave(_waveDelay, () =>
+                {
+                    _waveEventChannel.OnNewWave(_waveNumber + 1, _waveAmount, _timeBetweenWaves);
+                }));
+            }
         }
     }
 
