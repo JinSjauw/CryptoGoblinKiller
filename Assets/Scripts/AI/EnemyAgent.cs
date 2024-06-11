@@ -317,9 +317,6 @@ public class EnemyAgent : MonoBehaviour
         
         _lastState = _state;
         _state = state;
-        //_stateDebugText.text = "STATE: " + state;
-        
-        //PlayAnimation(state);
     }
 
     private void ChangeTarget(Transform target)
@@ -334,7 +331,6 @@ public class EnemyAgent : MonoBehaviour
             Move(target.position, _moveSpeed);
             ChangeState(NPCStates.MOVING);
         }
-        //Debug.Log("Changing Target: " + target.name);
     }
     
     #endregion

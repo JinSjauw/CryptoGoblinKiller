@@ -13,7 +13,7 @@ public class AgentManager : MonoBehaviour
     [SerializeField] private List<Transform> _defendPoints;
     [SerializeField] private List<Transform> _spawnPoints;
     
-    [SerializeField] private List<EnemyAgent> _activeList;
+    [SerializeField] private List<Enemy> _activeList;
     
     //Wave Settings
     
@@ -24,7 +24,7 @@ public class AgentManager : MonoBehaviour
     
     private ObjectPool _objectPool;
 
-    private int _waveNumber;
+    [SerializeField] private int _waveNumber;
     
     #region Unity Functions
 
@@ -45,14 +45,18 @@ public class AgentManager : MonoBehaviour
 
     public void KillWave()
     {
-        foreach (EnemyAgent agent in _activeList)
+        foreach (Enemy agent in _activeList)
         {
-            agent.AgentDeathEvent -= OnAgentDeath;
+            agent.OnEnemyDeath -= OnAgentDeath;
             agent.GetComponent<HealthComponent>().TakeDamage(10000);
         }
         
         _activeList.Clear();
-        StartCoroutine(SpawnWave(_waveDelay));
+
+        if (_waveNumber < _waveAmount)
+        {
+            StartCoroutine(SpawnWave(_waveDelay));
+        }
     }
 
     #endregion
@@ -61,51 +65,50 @@ public class AgentManager : MonoBehaviour
 
     private void SpawnAgent(Vector3 position)
     {
-        if (_objectPool.GetObject(_agentPrefab).TryGetComponent(out EnemyAgent agent))
+        if (_objectPool.GetObject(_agentPrefab).TryGetComponent(out Enemy enemy))
         {
-            _activeList.Add(agent);
-            agent.AgentDeathEvent += OnAgentDeath;
+            _activeList.Add(enemy);
+            enemy.OnEnemyDeath += OnAgentDeath;
             Vector2 randomOffset = Random.insideUnitCircle;
-
+            
             if (NavMesh.SamplePosition(position, out NavMeshHit hit, 1.5f, NavMesh.AllAreas))
             {
-                agent.transform.position = new Vector3(hit.position.x + randomOffset.x, hit.position.y, hit.position.z + randomOffset.y);
+                enemy.transform.position = new Vector3(hit.position.x + randomOffset.x, hit.position.y, hit.position.z + randomOffset.y);
             }
             else
             {
                 Debug.Log("Couldnt find navmesh!");
                 return;
             }
-            
-            if(agent.IsInitialized()) return;
 
             Transform targetObjective = _defendPoints[Random.Range(0, _defendPoints.Count)];
             List<Transform> objectivesList = new List<Transform>(_defendPoints);
             objectivesList.Remove(targetObjective);
             
-            agent.Initialize(_playerTransform, targetObjective, objectivesList, _objectPool);
+            enemy.Initialize(_playerTransform, targetObjective, _objectPool, objectivesList);
+            enemy.Spawn();
         }
     }
 
-    private void OnAgentDeath(object sender, EnemyAgent agent)
+    private void OnAgentDeath(Enemy enemy)
     {
-        if (_activeList.Contains(agent))
+        if (_activeList.Contains(enemy))
         {
-            _activeList.Remove(agent);
-        }
-
-        //Spawn new Wave?
-        if (_activeList.Count <= 0 && _waveNumber < _waveAmount)
-        {
-            StartCoroutine(SpawnWave(_waveDelay));
+            _activeList.Remove(enemy);
+            
+            //Spawn new Wave?
+            if (_activeList.Count == 0 && _waveNumber < _waveAmount)
+            {
+                StartCoroutine(SpawnWave(_waveDelay));
+            }
         }
     }
 
     private IEnumerator SpawnWave(float delay = 0)
     {
-        yield return new WaitForSeconds(delay);
-        
         _waveNumber++;
+        
+        yield return new WaitForSeconds(delay);
         
         int enemyPerPoint = (_enemyAmount * _waveNumber) / _spawnPoints.Count;
         
@@ -113,6 +116,7 @@ public class AgentManager : MonoBehaviour
         {
             for (int j = 0; j < enemyPerPoint; j++)
             {
+                Debug.Log(i + " " + j + " Enemy per Point: " + enemyPerPoint);
                 SpawnAgent(_spawnPoints[i].position);
             }
         }
