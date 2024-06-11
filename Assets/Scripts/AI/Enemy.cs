@@ -86,6 +86,7 @@ public class Enemy : MonoBehaviour
         
         //Melee Transitions
         _enemyFSM.AddTransition(new Transition<EnemyState>(EnemyState.MELEE, EnemyState.CHASE, ShouldNotMelee));
+        _enemyFSM.AddTransition(new Transition<EnemyState>(EnemyState.MELEE, EnemyState.MOVING, ShouldNotMelee));
         _enemyFSM.AddTransition(new Transition<EnemyState>(EnemyState.CHASE, EnemyState.MELEE, ShouldMelee, null, null, true));
         _enemyFSM.AddTransition(new Transition<EnemyState>(EnemyState.MOVING, EnemyState.MELEE, ShouldMelee, null, null, true));
         _enemyFSM.AddTriggerTransition(StateEvent.CHASEPLAYER, new Transition<EnemyState>(EnemyState.MELEE, EnemyState.CHASE));
