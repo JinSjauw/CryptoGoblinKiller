@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Ami.BroAudio;
 using UnityEngine;
 using UnityEngine.AI;
 using Random = UnityEngine.Random;
@@ -17,6 +18,7 @@ public class AgentManager : MonoBehaviour
     [SerializeField] private List<Enemy> _activeList;
     
     //Wave Settings
+    [SerializeField] private SoundID _waveStartSound;
     [SerializeField] private WaveSpawnType _waveSpawnType;
     [SerializeField] private int _waveAmount;
     [SerializeField] private int _waveDelay;
@@ -144,6 +146,8 @@ public class AgentManager : MonoBehaviour
         _waveNumber++;
         
         yield return new WaitForSeconds(delay);
+
+        BroAudio.Play(_waveStartSound);
         
         int enemyPerPoint = (_enemyAmount * _waveNumber) / _spawnPoints.Count;
         

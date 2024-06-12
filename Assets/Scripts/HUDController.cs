@@ -37,6 +37,7 @@ public class HUDController : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _waveCounter;
     [SerializeField] private TextMeshProUGUI _waveTimer;
     
+    
     [Header("UI Prefabs")] 
     [SerializeField] private Transform _objectiveUIPrefab;
     

@@ -8,7 +8,8 @@ public class ObjectivePoint : MonoBehaviour
 {
     [SerializeField] private Transform _debugPrefab;
     [SerializeField] private bool _spawnDebug;
-    
+
+    [SerializeField] private Shape _shapeID;
     [SerializeField] private int _maxSieging;
     [SerializeField] private float _siegeRadius;
     
@@ -16,6 +17,7 @@ public class ObjectivePoint : MonoBehaviour
     [SerializeField] private float _guardRadius;*/
 
     public Guid ID { get; } = Guid.NewGuid();
+    public Shape ShapeID => _shapeID;
     
     public UnityAction<float, float, Guid> ObjectiveHealthChangedEvent;
     public UnityAction ObjectiveDestructionEvent;
@@ -155,4 +157,12 @@ public class ObjectivePoint : MonoBehaviour
     }
 
     #endregion
+}
+
+public enum Shape
+{
+    TORUS = 0,
+    CUBE = 1,
+    PYRAMID = 2,
+    CROSS = 3,
 }
