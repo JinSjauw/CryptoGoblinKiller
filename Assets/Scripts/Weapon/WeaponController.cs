@@ -61,8 +61,11 @@ public class WeaponController : MonoBehaviour
     
     private bool _canShoot;
     private int _currentAmmo;
+    
+    private int _shotgunAmmo;
+    private int _revolverAmmo;
+    
     private float _fireTimer;
-
     private bool _isReloading;
     private float _reloadTimer;
 
@@ -89,6 +92,9 @@ public class WeaponController : MonoBehaviour
         _inputHandler.ShootEvent += Shoot;
         _inputHandler.WeaponChangeEvent += ChangeWeapon;
         _inputHandler.WeaponReloadEvent += Reload;
+
+        _shotgunAmmo = _shotgunData.MagSize;
+        _revolverAmmo = _revolverData.MagSize;
         
         ChangeWeapon(-1);
     }
@@ -138,6 +144,9 @@ public class WeaponController : MonoBehaviour
             ChangeWeaponData(_revolverData);
             _muzzleFlash = _revolverMuzzleFlash;
             _muzzleTransform = _revolverMuzzleTransform;
+
+            _shotgunAmmo = _currentAmmo;
+            _currentAmmo = _revolverAmmo;
             
             _weaponRecoil.ChangeWeapon(_revolverSpinAxis, _revolverData.RecoilData);
         }
@@ -151,6 +160,9 @@ public class WeaponController : MonoBehaviour
             ChangeWeaponData(_shotgunData);
             _muzzleFlash = _shotGunMuzzleFlash;
             _muzzleTransform = _shotgunMuzzleTransform;
+
+            _revolverAmmo = _currentAmmo;
+            _currentAmmo = _shotgunAmmo;
             
             _weaponRecoil.ChangeWeapon(_shotgunSpinAxis, _shotgunData.RecoilData);
         }
@@ -158,7 +170,7 @@ public class WeaponController : MonoBehaviour
         _weaponEventChannel.OnWeaponChange(_weaponType);
         
         _canShoot = true;
-        _currentAmmo = _magSize;
+        //_currentAmmo = _magSize;
     }
     
     private void Shoot()
@@ -186,7 +198,7 @@ public class WeaponController : MonoBehaviour
     {
         if (!_isReloading)
         {
-            _weaponEventChannel.OnReloadStart(_magSize);
+            _weaponEventChannel.OnReloadStart(_magSize, _reloadTime);
             _canShoot = false;
             _isReloading = true;
             //Play Reload Anim;

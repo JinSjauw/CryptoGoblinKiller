@@ -46,15 +46,6 @@ public partial class @StandardInput: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""Sprint"",
-                    ""type"": ""Button"",
-                    ""id"": ""647083de-55da-4f2c-b0fa-fbdfe1f2d4a5"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
                     ""name"": ""Grapple"",
                     ""type"": ""Button"",
                     ""id"": ""4118abf8-811d-4444-a524-b3b040901bf4"",
@@ -178,17 +169,6 @@ public partial class @StandardInput: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""62437edf-0c7a-4ef5-96eb-65bd04a02702"",
-                    ""path"": ""<Keyboard>/leftShift"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Sprint"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
                     ""id"": ""04cb9166-6a21-43ea-ad16-2bb2c1ee809a"",
                     ""path"": ""<Mouse>/rightButton"",
                     ""interactions"": """",
@@ -284,7 +264,6 @@ public partial class @StandardInput: IInputActionCollection2, IDisposable
         m_Gameplay = asset.FindActionMap("Gameplay", throwIfNotFound: true);
         m_Gameplay_Move = m_Gameplay.FindAction("Move", throwIfNotFound: true);
         m_Gameplay_Jump = m_Gameplay.FindAction("Jump", throwIfNotFound: true);
-        m_Gameplay_Sprint = m_Gameplay.FindAction("Sprint", throwIfNotFound: true);
         m_Gameplay_Grapple = m_Gameplay.FindAction("Grapple", throwIfNotFound: true);
         m_Gameplay_ExtendRope = m_Gameplay.FindAction("ExtendRope", throwIfNotFound: true);
         m_Gameplay_ShortenRope = m_Gameplay.FindAction("ShortenRope", throwIfNotFound: true);
@@ -354,7 +333,6 @@ public partial class @StandardInput: IInputActionCollection2, IDisposable
     private List<IGameplayActions> m_GameplayActionsCallbackInterfaces = new List<IGameplayActions>();
     private readonly InputAction m_Gameplay_Move;
     private readonly InputAction m_Gameplay_Jump;
-    private readonly InputAction m_Gameplay_Sprint;
     private readonly InputAction m_Gameplay_Grapple;
     private readonly InputAction m_Gameplay_ExtendRope;
     private readonly InputAction m_Gameplay_ShortenRope;
@@ -367,7 +345,6 @@ public partial class @StandardInput: IInputActionCollection2, IDisposable
         public GameplayActions(@StandardInput wrapper) { m_Wrapper = wrapper; }
         public InputAction @Move => m_Wrapper.m_Gameplay_Move;
         public InputAction @Jump => m_Wrapper.m_Gameplay_Jump;
-        public InputAction @Sprint => m_Wrapper.m_Gameplay_Sprint;
         public InputAction @Grapple => m_Wrapper.m_Gameplay_Grapple;
         public InputAction @ExtendRope => m_Wrapper.m_Gameplay_ExtendRope;
         public InputAction @ShortenRope => m_Wrapper.m_Gameplay_ShortenRope;
@@ -389,9 +366,6 @@ public partial class @StandardInput: IInputActionCollection2, IDisposable
             @Jump.started += instance.OnJump;
             @Jump.performed += instance.OnJump;
             @Jump.canceled += instance.OnJump;
-            @Sprint.started += instance.OnSprint;
-            @Sprint.performed += instance.OnSprint;
-            @Sprint.canceled += instance.OnSprint;
             @Grapple.started += instance.OnGrapple;
             @Grapple.performed += instance.OnGrapple;
             @Grapple.canceled += instance.OnGrapple;
@@ -420,9 +394,6 @@ public partial class @StandardInput: IInputActionCollection2, IDisposable
             @Jump.started -= instance.OnJump;
             @Jump.performed -= instance.OnJump;
             @Jump.canceled -= instance.OnJump;
-            @Sprint.started -= instance.OnSprint;
-            @Sprint.performed -= instance.OnSprint;
-            @Sprint.canceled -= instance.OnSprint;
             @Grapple.started -= instance.OnGrapple;
             @Grapple.performed -= instance.OnGrapple;
             @Grapple.canceled -= instance.OnGrapple;
@@ -462,7 +433,6 @@ public partial class @StandardInput: IInputActionCollection2, IDisposable
     {
         void OnMove(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
-        void OnSprint(InputAction.CallbackContext context);
         void OnGrapple(InputAction.CallbackContext context);
         void OnExtendRope(InputAction.CallbackContext context);
         void OnShortenRope(InputAction.CallbackContext context);

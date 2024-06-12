@@ -9,7 +9,7 @@ public class WeaponEventChannel : ScriptableObject
     public UnityAction<WeaponType> WeaponChangeEvent;
     public UnityAction<int> FireEvent;
     public UnityAction DryFireEvent;
-    public UnityAction<int> ReloadStartEvent;
+    public UnityAction<int, float> ReloadStartEvent;
     public UnityAction ReloadEndEvent;
 
     public void OnWeaponChange(WeaponType type)
@@ -27,9 +27,9 @@ public class WeaponEventChannel : ScriptableObject
         DryFireEvent?.Invoke();
     }
 
-    public void OnReloadStart(int ammo)
+    public void OnReloadStart(int ammo, float reloadTime)
     {
-        ReloadStartEvent?.Invoke(ammo);
+        ReloadStartEvent?.Invoke(ammo, reloadTime);
     }
 
     public void OnReloadEnd()

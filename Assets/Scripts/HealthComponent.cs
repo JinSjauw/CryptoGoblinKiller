@@ -13,7 +13,6 @@ public class HealthComponent : MonoBehaviour
     [SerializeField] private float _healingRate;
     
     private bool _canRecharge;
-    private float _startHealthHeal;
     private float _healingAlpha;
 
     public event EventHandler DeathEvent;
@@ -36,20 +35,21 @@ public class HealthComponent : MonoBehaviour
             //Lerp current health to max;
             _healingAlpha = Mathf.MoveTowards(_healingAlpha, 1, _healingRate * Time.deltaTime);
             _health = Mathf.Lerp(0, _maxHealth,_healingAlpha);
-            _playerEventChannel.OnHealthChanged(_health);
+            //_playerEventChannel.OnHealthChanged(_health);
         }
     }
 
     private void StartWallRecharge()
     {
-        _startHealthHeal = _health;
         _healingAlpha = _health / _maxHealth;
         _canRecharge = true;
+        _playerEventChannel.OnHealthRechargeStart(_health, _healingRate);
     }
     
     private void StopWallRecharge()
     {
         _canRecharge = false;
+        _playerEventChannel.OnHealthRechargeStop();
     }
 
     public void TakeDamage(float damage, HitBoxType type = HitBoxType.DEFAULT)

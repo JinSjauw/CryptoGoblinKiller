@@ -36,7 +36,7 @@ public class WeaponSoundController : MonoBehaviour
         WeaponChange(_defaultType);
     }
 
-    private void Reload(int ammo)
+    private void Reload(int ammo, float reloadTime)
     {
         BroAudio.Play(_currentReloadAudio, _muzzle);
     }
