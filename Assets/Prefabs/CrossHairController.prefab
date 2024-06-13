@@ -73,6 +73,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _innerCrosshair: {fileID: 6452786661452383362}
   _outerCrosshair: {fileID: 1935133672868006411}
+  _changeTime: 0
 --- !u!1 &702644557615930189
 GameObject:
   m_ObjectHideFlags: 0
@@ -650,6 +651,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _innerCrosshair: {fileID: 6452786661452383362}
   _outerCrosshair: {fileID: 1935133672868006411}
+  _changeTime: 1
 --- !u!1 &6666156862154453123
 GameObject:
   m_ObjectHideFlags: 0

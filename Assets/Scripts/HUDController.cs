@@ -27,7 +27,13 @@ public class HUDController : MonoBehaviour
     [Header("Guns")]
     [SerializeField] private GunIconController _shotgunIconController;
     [SerializeField] private GunIconController _revolverIconController;
+    [SerializeField] private CrosshairController _crosshairController;
+    [SerializeField] private Vector2 _shotgunCrossInnerSize;
+    [SerializeField] private Vector2 _shotgunCrossOuterSize;
     
+    [SerializeField] private Vector2 _revolverCrossInnerSize;
+    [SerializeField] private Vector2 _revolverCrossOuterSize;
+
     [Header("Objectives")]
     //[SerializeField] private Transform _objectiveUIContainer;
     [SerializeField] private Transform _loseScreen;
@@ -219,12 +225,14 @@ public class HUDController : MonoBehaviour
             _shotgunIconController.gameObject.SetActive(true);
             _revolverIconController.gameObject.SetActive(false);
             _currentGunIconController = _shotgunIconController;
+            _crosshairController.ChangeCrosshair(_shotgunCrossInnerSize, _shotgunCrossOuterSize);
         }
         else
         {
             _shotgunIconController.gameObject.SetActive(false);
             _revolverIconController.gameObject.SetActive(true);
             _currentGunIconController = _revolverIconController;
+            _crosshairController.ChangeCrosshair(_revolverCrossInnerSize, _revolverCrossOuterSize);
         }
     }
 

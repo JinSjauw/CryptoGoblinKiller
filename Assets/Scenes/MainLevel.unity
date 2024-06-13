@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.029087221, g: 0.029897578, b: 0.029896645, a: 1}
+  m_IndirectSpecularColor: {r: 0.029087335, g: 0.0298977, b: 0.029896773, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1241,6 +1241,11 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 1652567296}
+    - target: {fileID: 1899848542311885343, guid: 6e538bfcee38f124d83cba0de8a9e04f,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1906686114671136962, guid: 6e538bfcee38f124d83cba0de8a9e04f,
         type: 3}
       propertyPath: m_Mesh
@@ -1661,6 +1666,51 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 799379889}
+    - target: {fileID: 3914394162906990355, guid: 6e538bfcee38f124d83cba0de8a9e04f,
+        type: 3}
+      propertyPath: _crosshairController
+      value: 
+      objectReference: {fileID: 949712889}
+    - target: {fileID: 3914394162906990355, guid: 6e538bfcee38f124d83cba0de8a9e04f,
+        type: 3}
+      propertyPath: _shotgunCrossInnerSize.x
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 3914394162906990355, guid: 6e538bfcee38f124d83cba0de8a9e04f,
+        type: 3}
+      propertyPath: _shotgunCrossInnerSize.y
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 3914394162906990355, guid: 6e538bfcee38f124d83cba0de8a9e04f,
+        type: 3}
+      propertyPath: _shotgunCrossOuterSize.x
+      value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: 3914394162906990355, guid: 6e538bfcee38f124d83cba0de8a9e04f,
+        type: 3}
+      propertyPath: _shotgunCrossOuterSize.y
+      value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: 3914394162906990355, guid: 6e538bfcee38f124d83cba0de8a9e04f,
+        type: 3}
+      propertyPath: _revolverCrossInnerSize.x
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 3914394162906990355, guid: 6e538bfcee38f124d83cba0de8a9e04f,
+        type: 3}
+      propertyPath: _revolverCrossInnerSize.y
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 3914394162906990355, guid: 6e538bfcee38f124d83cba0de8a9e04f,
+        type: 3}
+      propertyPath: _revolverCrossOuterSize.x
+      value: 26
+      objectReference: {fileID: 0}
+    - target: {fileID: 3914394162906990355, guid: 6e538bfcee38f124d83cba0de8a9e04f,
+        type: 3}
+      propertyPath: _revolverCrossOuterSize.y
+      value: 28
+      objectReference: {fileID: 0}
     - target: {fileID: 3928367511248787515, guid: 6e538bfcee38f124d83cba0de8a9e04f,
         type: 3}
       propertyPath: m_Mesh
@@ -2246,6 +2296,11 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 1167087495}
+    - target: {fileID: 7023218702421791055, guid: 6e538bfcee38f124d83cba0de8a9e04f,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7050094208619125438, guid: 6e538bfcee38f124d83cba0de8a9e04f,
         type: 3}
       propertyPath: m_Mesh
@@ -2306,6 +2361,11 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 1844328095}
+    - target: {fileID: 7595461706857550927, guid: 6e538bfcee38f124d83cba0de8a9e04f,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7615522280947685801, guid: 6e538bfcee38f124d83cba0de8a9e04f,
         type: 3}
       propertyPath: m_Mesh
@@ -2594,6 +2654,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 7076018506716304797, guid: 6e538bfcee38f124d83cba0de8a9e04f,
+        type: 3}
+      insertIndex: 0
+      addedObject: {fileID: 949712888}
     - targetCorrespondingSourceObject: {fileID: 4552968272703765084, guid: 6e538bfcee38f124d83cba0de8a9e04f,
         type: 3}
       insertIndex: -1
@@ -2603,6 +2667,12 @@ PrefabInstance:
 --- !u!224 &127053532 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 4552968272703765084, guid: 6e538bfcee38f124d83cba0de8a9e04f,
+    type: 3}
+  m_PrefabInstance: {fileID: 127053531}
+  m_PrefabAsset: {fileID: 0}
+--- !u!224 &127053533 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 7076018506716304797, guid: 6e538bfcee38f124d83cba0de8a9e04f,
     type: 3}
   m_PrefabInstance: {fileID: 127053531}
   m_PrefabAsset: {fileID: 0}
@@ -9866,6 +9936,152 @@ Mesh:
     offset: 0
     size: 0
     path: 
+--- !u!1001 &949712887
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 127053533}
+    m_Modifications:
+    - target: {fileID: 559018304354608473, guid: ee2102ad71d001046a53a09681a0992f,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6305378352249868454, guid: ee2102ad71d001046a53a09681a0992f,
+        type: 3}
+      propertyPath: m_Name
+      value: CrossHairController
+      objectReference: {fileID: 0}
+    - target: {fileID: 7749384727444601389, guid: ee2102ad71d001046a53a09681a0992f,
+        type: 3}
+      propertyPath: _changeTime
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 9074507779790989892, guid: ee2102ad71d001046a53a09681a0992f,
+        type: 3}
+      propertyPath: m_Pivot.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 9074507779790989892, guid: ee2102ad71d001046a53a09681a0992f,
+        type: 3}
+      propertyPath: m_Pivot.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 9074507779790989892, guid: ee2102ad71d001046a53a09681a0992f,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 9074507779790989892, guid: ee2102ad71d001046a53a09681a0992f,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 9074507779790989892, guid: ee2102ad71d001046a53a09681a0992f,
+        type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 9074507779790989892, guid: ee2102ad71d001046a53a09681a0992f,
+        type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 9074507779790989892, guid: ee2102ad71d001046a53a09681a0992f,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 9074507779790989892, guid: ee2102ad71d001046a53a09681a0992f,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 9074507779790989892, guid: ee2102ad71d001046a53a09681a0992f,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9074507779790989892, guid: ee2102ad71d001046a53a09681a0992f,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9074507779790989892, guid: ee2102ad71d001046a53a09681a0992f,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9074507779790989892, guid: ee2102ad71d001046a53a09681a0992f,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9074507779790989892, guid: ee2102ad71d001046a53a09681a0992f,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9074507779790989892, guid: ee2102ad71d001046a53a09681a0992f,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9074507779790989892, guid: ee2102ad71d001046a53a09681a0992f,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9074507779790989892, guid: ee2102ad71d001046a53a09681a0992f,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9074507779790989892, guid: ee2102ad71d001046a53a09681a0992f,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9074507779790989892, guid: ee2102ad71d001046a53a09681a0992f,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9074507779790989892, guid: ee2102ad71d001046a53a09681a0992f,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9074507779790989892, guid: ee2102ad71d001046a53a09681a0992f,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: ee2102ad71d001046a53a09681a0992f, type: 3}
+--- !u!224 &949712888 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 9074507779790989892, guid: ee2102ad71d001046a53a09681a0992f,
+    type: 3}
+  m_PrefabInstance: {fileID: 949712887}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &949712889 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7749384727444601389, guid: ee2102ad71d001046a53a09681a0992f,
+    type: 3}
+  m_PrefabInstance: {fileID: 949712887}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 138282528db5d0240985c0fcdd0960b3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!43 &1028323521
 Mesh:
   m_ObjectHideFlags: 0
