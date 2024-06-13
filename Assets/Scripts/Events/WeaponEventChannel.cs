@@ -36,4 +36,13 @@ public class WeaponEventChannel : ScriptableObject
     {
         ReloadEndEvent?.Invoke();
     }
+
+    public void Unsubscribe()
+    {
+        WeaponChangeEvent = null;
+        FireEvent = null;
+        DryFireEvent = null;
+        ReloadStartEvent = null;
+        ReloadEndEvent = null;
+    }
 }

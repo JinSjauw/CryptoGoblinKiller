@@ -28,6 +28,12 @@ public class HealthComponent : MonoBehaviour
         _playerEventChannel.PlayerWallRunStopEvent += StopWallRecharge;
     }
 
+    private void OnDestroy()
+    {
+        DeathEvent = null;
+        HealthChangeEvent = null;
+    }
+
     private void Update()
     {
         if (_canRecharge)

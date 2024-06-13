@@ -26,6 +26,9 @@
         },
         {
             "m_Id": "d75cedc1a4f7405586fcd856df386321"
+        },
+        {
+            "m_Id": "1b54639506c74659a3fa887f9976c494"
         }
     ],
     "m_Keywords": [],
@@ -836,6 +839,29 @@
 
 {
     "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.Internal.BooleanShaderProperty",
+    "m_ObjectId": "1b54639506c74659a3fa887f9976c494",
+    "m_Guid": {
+        "m_GuidSerialized": "7cefb8f4-0d7b-43e6-bd2b-adb6620e69b0"
+    },
+    "m_Name": "Enabled",
+    "m_DefaultRefNameVersion": 1,
+    "m_RefNameGeneratedByDisplayName": "Enabled",
+    "m_DefaultReferenceName": "_Enabled",
+    "m_OverrideReferenceName": "",
+    "m_GeneratePropertyBlock": true,
+    "m_UseCustomSlotLabel": false,
+    "m_CustomSlotLabel": "",
+    "m_DismissedVersion": 0,
+    "m_Precision": 0,
+    "overrideHLSLDeclaration": false,
+    "hlslDeclarationOverride": 0,
+    "m_Hidden": false,
+    "m_Value": false
+}
+
+{
+    "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
     "m_ObjectId": "1d1d140dfabb47e08971492dbec464e6",
     "m_Id": 2,
@@ -857,6 +883,9 @@
     "m_ChildObjectList": [
         {
             "m_Id": "ad3de54eb7fa40298350fb51c43c3007"
+        },
+        {
+            "m_Id": "1b54639506c74659a3fa887f9976c494"
         },
         {
             "m_Id": "6d8fb6e48c54477d814afc61bf03ad24"

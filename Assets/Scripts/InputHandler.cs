@@ -39,7 +39,7 @@ public class InputHandler : ScriptableObject, StandardInput.IGameplayActions
     {
         if (context.performed)
         {
-            MoveEvent.Invoke(context.ReadValue<Vector2>());
+            MoveEvent?.Invoke(context.ReadValue<Vector2>());
         }
     }
 
@@ -47,7 +47,7 @@ public class InputHandler : ScriptableObject, StandardInput.IGameplayActions
     {
         if (context.performed)
         {
-            JumpEvent.Invoke();
+            JumpEvent?.Invoke();
         }
     }
 
@@ -55,12 +55,12 @@ public class InputHandler : ScriptableObject, StandardInput.IGameplayActions
     {
         if (context.performed)
         {
-            SprintEvent.Invoke(true);
+            SprintEvent?.Invoke(true);
         }
 
         if (context.canceled)
         {
-            SprintEvent.Invoke(false);
+            SprintEvent?.Invoke(false);
         }
     }
 
@@ -68,12 +68,12 @@ public class InputHandler : ScriptableObject, StandardInput.IGameplayActions
     {
         if (context.performed)
         {
-            GrappleEvent.Invoke(true);
+            GrappleEvent?.Invoke(true);
         }
 
         if (context.canceled)
         {
-            GrappleEvent.Invoke(false);
+            GrappleEvent?.Invoke(false);
         }
     }
 
@@ -91,7 +91,7 @@ public class InputHandler : ScriptableObject, StandardInput.IGameplayActions
     {
         if (context.performed)
         {
-            ShootEvent.Invoke();
+            ShootEvent?.Invoke();
         }
     }
 
@@ -99,7 +99,7 @@ public class InputHandler : ScriptableObject, StandardInput.IGameplayActions
     {
         if (context.performed)
         {
-            WeaponChangeEvent.Invoke(context.ReadValue<float>());
+            WeaponChangeEvent?.Invoke(context.ReadValue<float>());
         }
     }
 
@@ -107,7 +107,7 @@ public class InputHandler : ScriptableObject, StandardInput.IGameplayActions
     {
         if (context.performed)
         {
-            WeaponReloadEvent.Invoke();
+            WeaponReloadEvent?.Invoke();
         }
     }
 }

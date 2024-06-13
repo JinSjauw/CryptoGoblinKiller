@@ -62,6 +62,12 @@ public class ObjectivePoint : MonoBehaviour
         _healthComponent.DeathEvent -= OnDestruction;
     }
 
+    private void OnDestroy()
+    {
+        ObjectiveHealthChangedEvent = null;
+        ObjectiveDestructionEvent = null;
+    }
+
     private void OnDestruction(object sender, EventArgs e)
     {
         if (_isDestroyed) return;

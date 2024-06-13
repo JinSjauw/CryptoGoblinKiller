@@ -15,7 +15,7 @@ public class EnemyHitBox : MonoBehaviour
 
     private SoundSource _soundSource;
     
-    private bool _animateHead;
+    private bool _animateHead = false;
     private float _headScale;
     private float _headScaleDelta;
 
@@ -23,7 +23,8 @@ public class EnemyHitBox : MonoBehaviour
     
     private void Awake()
     {
-        _headScale = 1;
+        _headScale = transform.localScale.x;
+        //Debug.Log("Animating Head! " + _headScale + " TS: " + _targetHeadScale);
         _springMotionParams = new SpringUtils.SpringMotionParams();
         _soundSource = GetComponent<SoundSource>();
     }
@@ -36,8 +37,10 @@ public class EnemyHitBox : MonoBehaviour
             //Head Swells up and then implodes.
             SpringUtils.CalcDampedSpringMotionParams(_springMotionParams, Time.deltaTime, _headSpringData.frequency, _headSpringData.dampingRatio);
             SpringUtils.UpdateDampedSpringMotion(ref _headScale, ref _headScaleDelta, _targetHeadScale, _springMotionParams);
-
-            if (_headScale <= _targetHeadScale)
+            
+            //Debug.Log("Animating Head! " + _headScale + " TS: " + _targetHeadScale);
+            
+            if (_headScale < _targetHeadScale)
             {
                 _animateHead = false;
                 

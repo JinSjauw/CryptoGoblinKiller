@@ -60,10 +60,10 @@ public class WeaponController : MonoBehaviour
     //Weapon Logic Data
     
     private bool _canShoot;
-    private int _currentAmmo;
+    [SerializeField] private int _currentAmmo;
     
-    private int _shotgunAmmo;
-    private int _revolverAmmo;
+    [SerializeField] private int _shotgunAmmo;
+    [SerializeField] private int _revolverAmmo;
     
     private float _fireTimer;
     private bool _isReloading;
@@ -95,6 +95,7 @@ public class WeaponController : MonoBehaviour
 
         _shotgunAmmo = _shotgunData.MagSize;
         _revolverAmmo = _revolverData.MagSize;
+        _currentAmmo = _shotgunAmmo;
         
         ChangeWeapon(-1);
     }
@@ -160,7 +161,7 @@ public class WeaponController : MonoBehaviour
             ChangeWeaponData(_shotgunData);
             _muzzleFlash = _shotGunMuzzleFlash;
             _muzzleTransform = _shotgunMuzzleTransform;
-
+            
             _revolverAmmo = _currentAmmo;
             _currentAmmo = _shotgunAmmo;
             
@@ -233,8 +234,6 @@ public class WeaponController : MonoBehaviour
         _weaponType = data.WeaponType;
         _magSize = data.MagSize;
         _reserveAmmo = data.ReserveAmmo;
-        
-        
     }
 
     private void CanShoot()

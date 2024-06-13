@@ -16,4 +16,10 @@ public class WaveEventChannel : ScriptableObject
     {
         WavesClearedEvent?.Invoke();
     }
+
+    public void Unsubscribe()
+    {
+        NewWaveEvent = null;
+        WavesClearedEvent = null;
+    }
 }

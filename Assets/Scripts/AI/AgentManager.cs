@@ -41,10 +41,10 @@ public class AgentManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        _waveEventChannel.OnNewWave(_waveNumber + 1, _waveAmount, _waveDelay);
+        _waveEventChannel.OnNewWave(1, _waveAmount, _waveDelay);
         StartCoroutine(SpawnWave(_waveDelay, () =>
         {
-            _waveEventChannel.OnNewWave(_waveNumber + 1, _waveAmount, _timeBetweenWaves);
+            _waveEventChannel.OnNewWave(_waveNumber, _waveAmount, _timeBetweenWaves);
         }));
     }
 
@@ -53,9 +53,9 @@ public class AgentManager : MonoBehaviour
         if(_waveSpawnType != WaveSpawnType.ONTIMER) return;
         
         _waveTimer += Time.deltaTime;
-        if (_waveTimer > _timeBetweenWaves)
+        if (_waveTimer > _timeBetweenWaves && _waveNumber < _waveAmount)
         {
-            _waveEventChannel.OnNewWave(_waveNumber + 1, _waveAmount, _timeBetweenWaves);
+            _waveEventChannel.OnNewWave(_waveNumber, _waveAmount, _timeBetweenWaves);
             _waveTimer = 0;
             StartCoroutine(SpawnWave());
         }
@@ -77,6 +77,7 @@ public class AgentManager : MonoBehaviour
 
         if (_waveNumber < _waveAmount)
         {
+            _waveTimer = 0;
             StartCoroutine(SpawnWave(_waveDelay));
         }
     }
@@ -131,11 +132,11 @@ public class AgentManager : MonoBehaviour
 
             if (_activeList.Count == 0 && _waveNumber <= _waveAmount && _waveTimer < _timeBetweenWaves && _waveSpawnType == WaveSpawnType.ONTIMER)
             {
-                _waveEventChannel.OnNewWave(_waveNumber + 1, _waveAmount, _waveDelay);
+                //_waveEventChannel.OnNewWave(_waveNumber + 1, _waveAmount, _waveDelay);
                 _waveTimer = 0;
                 StartCoroutine(SpawnWave(_waveDelay, () =>
                 {
-                    _waveEventChannel.OnNewWave(_waveNumber + 1, _waveAmount, _timeBetweenWaves);
+                    _waveEventChannel.OnNewWave(_waveNumber, _waveAmount, _timeBetweenWaves);
                 }));
             }
         }

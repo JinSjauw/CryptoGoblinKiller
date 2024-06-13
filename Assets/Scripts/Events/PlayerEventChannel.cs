@@ -85,4 +85,25 @@ public class PlayerEventChannel : ScriptableObject
     {
         TakeDamageEvent?.Invoke(damage);
     }
+
+    public void Unsubscribe()
+    {
+        ChangedHealthEvent = null;
+        ChangedAmmoEvent = null;
+        
+        DeathEvent = null;
+        ReloadStartEvent = null;
+        ReloadEndEvent = null;
+        PlayerSpawnEvent = null;
+
+        PlayerJumpEvent = null;
+        PlayerLandEvent = null;
+
+        PlayerWallRunStartEvent = null;
+        PlayerWallRunStopEvent = null;
+
+        HealthRechargeStartEvent = null;
+        HealthRechargeStopEvent = null;
+        TakeDamageEvent = null;
+    }
 }

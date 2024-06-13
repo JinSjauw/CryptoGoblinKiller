@@ -97,6 +97,7 @@ Material:
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _DstBlendAlpha: 0
+    - _Enabled: 0
     - _EnvironmentReflections: 1
     - _FullScreenIntensity: 0.563
     - _GlossMapScale: 0

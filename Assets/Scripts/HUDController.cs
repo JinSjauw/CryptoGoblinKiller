@@ -1,11 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Xml;
 using Ami.BroAudio;
 using TMPro;
 using UnityEngine;
-using UnityEngine.ProBuilder.Shapes;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class HUDController : MonoBehaviour
@@ -87,8 +84,7 @@ public class HUDController : MonoBehaviour
         _weaponEventChannel.WeaponChangeEvent += WeaponChanged;
         _weaponEventChannel.FireEvent += WeaponFire;
         _weaponEventChannel.ReloadStartEvent += WeaponReload;
-
-        _objectiveEventChannel.PointInitEvent += InitPoint;
+        
         _objectiveEventChannel.HealthChangedEvent += ObjectiveHealthChanged;
         
         _objectiveEventChannel.LoseEvent += OnLose;
@@ -168,30 +164,35 @@ public class HUDController : MonoBehaviour
     
     private void OnWin()
     {
+        _playerEventChannel.Unsubscribe();
+        _weaponEventChannel.Unsubscribe();
+        _waveEventChannel.Unsubscribe();
+        _objectiveEventChannel.Unsubscribe();
+        
+        //Time.timeScale = 0;
+        BroAudio.Stop(BroAudioType.All);
+        _inputHandler.DisableGameplayInput();
         _winScreen.gameObject.SetActive(true);
+        Cursor.lockState = CursorLockMode.Confined;
+        Cursor.visible = true;
     }
     
     private void NewWaveSpawned(int waveNumber, int maxWaves, float waveTime)
     {
-        _waveCounter.text = "Wave: " + waveNumber + "/" + maxWaves;
+        _waveCounter.text = waveNumber + "/" + maxWaves;
         _waveTime = waveTime;
     }
 
     //Temp
     private void OnLose()
     {
-        Time.timeScale = 0;
+        //Time.timeScale = 0;
         BroAudio.Stop(BroAudioType.All);
         _loseScreen.gameObject.SetActive(true);
         _inputHandler.DisableGameplayInput();
-    }
 
-    private void InitPoint(Guid id, Shape shapeID)
-    {
-        //Image objectiveIcon = Instantiate(_objectiveUIPrefab, _objectiveUIContainer).GetChild(0).GetComponent<Image>();
-        //objectiveIcon.fillAmount = 1;
-        
-        //_objectiveIcons.Add(id, objectiveIcon);
+        Cursor.lockState = CursorLockMode.Confined;
+        Cursor.visible = true;
     }
     
     private void ObjectiveHealthChanged(float health, float maxHealth, Shape id)
