@@ -30,7 +30,7 @@ public class ObjectiveManager : MonoBehaviour
             //Bind ID's Here
             foreach (ObjectivePoint point in _objectivePoints)
             {
-                _objectiveEventChannel.InitPoint(point.ID);
+                //_objectiveEventChannel.InitPoint(point.ID);
                 point.ObjectiveHealthChangedEvent += OnPointHealthChanged;
                 point.ObjectiveDestructionEvent += OnPointDestroyed;
             }
@@ -49,7 +49,7 @@ public class ObjectiveManager : MonoBehaviour
         }
     }
 
-    private void OnPointHealthChanged(float health, float maxHealth, Guid id)
+    private void OnPointHealthChanged(float health, float maxHealth, Shape id)
     {
         _objectiveEventChannel.OnHealthChanged(health, maxHealth, id);
     }

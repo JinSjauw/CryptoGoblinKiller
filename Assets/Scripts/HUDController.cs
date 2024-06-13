@@ -4,6 +4,7 @@ using System.Xml;
 using Ami.BroAudio;
 using TMPro;
 using UnityEngine;
+using UnityEngine.ProBuilder.Shapes;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
 
@@ -31,17 +32,24 @@ public class HUDController : MonoBehaviour
     [SerializeField] private GunIconController _revolverIconController;
     
     [Header("Objectives")]
-    [SerializeField] private Transform _objectiveUIContainer;
+    //[SerializeField] private Transform _objectiveUIContainer;
     [SerializeField] private Transform _loseScreen;
     [SerializeField] private Transform _winScreen;
     [SerializeField] private TextMeshProUGUI _waveCounter;
     [SerializeField] private TextMeshProUGUI _waveTimer;
+
+    [Header("Objective Icons")] 
+    [SerializeField] private Image _torusFill;
+    [SerializeField] private Image _pyramidFill;
+    [SerializeField] private Image _cubeFill;
+    [SerializeField] private Image _xFill;
+
+    //[SerializeField] private Transform _objectiveUIPrefab;
     
+    private Dictionary<Shape, Image> _objectiveIcons;
+    private Dictionary<Shape, float> _objectiveIconFillAlphas;
+
     
-    [Header("UI Prefabs")] 
-    [SerializeField] private Transform _objectiveUIPrefab;
-    
-    private Dictionary<Guid, Image> _objectiveIcons;
     private GunIconController _currentGunIconController;
     
     private int _maxHealth = 250;
@@ -57,7 +65,18 @@ public class HUDController : MonoBehaviour
     
     private void Start()
     {
-        _objectiveIcons = new Dictionary<Guid, Image>();
+        _objectiveIcons = new Dictionary<Shape, Image>();
+        _objectiveIconFillAlphas = new Dictionary<Shape, float>();
+        
+        _objectiveIcons.Add(Shape.TORUS, _torusFill);
+        _objectiveIcons.Add(Shape.PYRAMID, _pyramidFill);
+        _objectiveIcons.Add(Shape.CUBE, _cubeFill);
+        _objectiveIcons.Add(Shape.CROSS, _xFill);
+        
+        _objectiveIconFillAlphas.Add(Shape.TORUS, 0);
+        _objectiveIconFillAlphas.Add(Shape.PYRAMID, 0);
+        _objectiveIconFillAlphas.Add(Shape.CUBE, 0);
+        _objectiveIconFillAlphas.Add(Shape.CROSS, 0);
         
         //Subscribe all events here
         _playerEventChannel.PlayerSpawnEvent += PlayerSpawned;
@@ -102,6 +121,22 @@ public class HUDController : MonoBehaviour
             _healthFill.fillAmount = Mathf.Lerp(0, 1, _healthAlpha);
            _healthBackground.color = _healingColour;
         }
+
+        foreach (Shape shape in _objectiveIcons.Keys)
+        {
+            float fillAlpha = _objectiveIconFillAlphas[shape];
+            
+            if(fillAlpha <= 0) continue;
+            
+            Image iconFill = _objectiveIcons[shape];
+            
+            fillAlpha = Mathf.MoveTowards(fillAlpha, 0, Time.deltaTime / 1);
+            iconFill.color = Color.Lerp(Color.white, Color.red, fillAlpha);
+
+            _objectiveIconFillAlphas[shape] = fillAlpha;
+            //iconFill.color = Color.Lerp()
+        }
+        
         
         if (_waveTime <= 0)
         {
@@ -151,16 +186,17 @@ public class HUDController : MonoBehaviour
         _inputHandler.DisableGameplayInput();
     }
 
-    private void InitPoint(Guid id)
+    private void InitPoint(Guid id, Shape shapeID)
     {
-        Image objectiveIcon = Instantiate(_objectiveUIPrefab, _objectiveUIContainer).GetChild(0).GetComponent<Image>();
-        objectiveIcon.fillAmount = 1;
+        //Image objectiveIcon = Instantiate(_objectiveUIPrefab, _objectiveUIContainer).GetChild(0).GetComponent<Image>();
+        //objectiveIcon.fillAmount = 1;
         
-        _objectiveIcons.Add(id, objectiveIcon);
+        //_objectiveIcons.Add(id, objectiveIcon);
     }
     
-    private void ObjectiveHealthChanged(float health, float maxHealth, Guid id)
+    private void ObjectiveHealthChanged(float health, float maxHealth, Shape id)
     {
+        _objectiveIconFillAlphas[id] = 1;
         _objectiveIcons[id].fillAmount = health / maxHealth;
     }
 

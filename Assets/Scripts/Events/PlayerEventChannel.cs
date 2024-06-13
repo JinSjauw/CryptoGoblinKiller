@@ -19,6 +19,7 @@ public class PlayerEventChannel : ScriptableObject
 
     public UnityAction<float, float> HealthRechargeStartEvent;
     public UnityAction HealthRechargeStopEvent;
+    public UnityAction<float> TakeDamageEvent;
 
     public void OnHealthChanged(float health)
     {
@@ -69,7 +70,7 @@ public class PlayerEventChannel : ScriptableObject
     {
         PlayerWallRunStopEvent?.Invoke();
     }
-
+    
     public void OnHealthRechargeStart(float health, float healingRate)
     {
         HealthRechargeStartEvent?.Invoke(health, healingRate);
@@ -78,5 +79,10 @@ public class PlayerEventChannel : ScriptableObject
     public void OnHealthRechargeStop()
     {
         HealthRechargeStopEvent?.Invoke();
+    }
+
+    public void OnTakeDamage(float damage)
+    {
+        TakeDamageEvent?.Invoke(damage);
     }
 }

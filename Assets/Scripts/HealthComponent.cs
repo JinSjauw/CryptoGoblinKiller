@@ -67,6 +67,7 @@ public class HealthComponent : MonoBehaviour
         if (_playerEventChannel != null)
         {
             _playerEventChannel.OnHealthChanged(_health);
+            _playerEventChannel.OnTakeDamage(damage);
         }
         else
         {

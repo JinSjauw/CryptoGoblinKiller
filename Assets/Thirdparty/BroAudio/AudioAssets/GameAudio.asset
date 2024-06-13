@@ -414,5 +414,104 @@ MonoBehaviour:
       BPM: 0
       Beats: 0
     SnapToFullVolume: 0
+  - <Name>k__BackingField: Objective Explosion
+    <ID>k__BackingField: 1073741846
+    MulticlipsPlayMode: 0
+    Clips:
+    - AudioClip: {fileID: 8300000, guid: cc49178afdd86ff40bb1d7bb9313e823, type: 3}
+      Volume: 1
+      Delay: 0
+      StartPosition: 0
+      EndPosition: 0
+      FadeIn: 0
+      FadeOut: 0
+      Weight: 0
+    <MasterVolume>k__BackingField: 0.6
+    <Loop>k__BackingField: 0
+    <SeamlessLoop>k__BackingField: 0
+    <TransitionTime>k__BackingField: 0
+    <SpatialSetting>k__BackingField: {fileID: 0}
+    <Priority>k__BackingField: 128
+    <Pitch>k__BackingField: 1.0634999
+    <PitchRandomRange>k__BackingField: 0.5849999
+    <VolumeRandomRange>k__BackingField: 0.23754984
+    <RandomFlags>k__BackingField: 1
+    SeamlessTransitionType: 0
+    TransitionTempo:
+      BPM: 0
+      Beats: 0
+    SnapToFullVolume: 0
+  - <Name>k__BackingField: GoblinChestHit
+    <ID>k__BackingField: 1073741847
+    MulticlipsPlayMode: 2
+    Clips:
+    - AudioClip: {fileID: 8300000, guid: 021c831d57e01e942906a504c0466235, type: 3}
+      Volume: 1
+      Delay: 0
+      StartPosition: 0
+      EndPosition: 0
+      FadeIn: 0
+      FadeOut: 0
+      Weight: 0
+    - AudioClip: {fileID: 8300000, guid: eb35c3a47d4794941bf6fdcda25e7055, type: 3}
+      Volume: 1
+      Delay: 0
+      StartPosition: 0
+      EndPosition: 0
+      FadeIn: 0
+      FadeOut: 0
+      Weight: 0
+    <MasterVolume>k__BackingField: 0.44300002
+    <Loop>k__BackingField: 0
+    <SeamlessLoop>k__BackingField: 0
+    <TransitionTime>k__BackingField: -1
+    <SpatialSetting>k__BackingField: {fileID: 11400000, guid: 7c95e5564af461a4f80288a498ca13ad,
+      type: 2}
+    <Priority>k__BackingField: 128
+    <Pitch>k__BackingField: 1.052
+    <PitchRandomRange>k__BackingField: 0.24599993
+    <VolumeRandomRange>k__BackingField: 0.11199999
+    <RandomFlags>k__BackingField: 3
+    SeamlessTransitionType: 0
+    TransitionTempo:
+      BPM: 0
+      Beats: 0
+    SnapToFullVolume: 0
+  - <Name>k__BackingField: GoblinHeadHit
+    <ID>k__BackingField: 1073741848
+    MulticlipsPlayMode: 2
+    Clips:
+    - AudioClip: {fileID: 8300000, guid: 3028a9659da04a54695ea792539d6fd5, type: 3}
+      Volume: 1
+      Delay: 0
+      StartPosition: 0
+      EndPosition: 0
+      FadeIn: 0
+      FadeOut: 0
+      Weight: 0
+    - AudioClip: {fileID: 8300000, guid: 0bd730afd4f03c142b066613a5225c91, type: 3}
+      Volume: 1
+      Delay: 0
+      StartPosition: 0
+      EndPosition: 0
+      FadeIn: 0
+      FadeOut: 0
+      Weight: 0
+    <MasterVolume>k__BackingField: 0.4
+    <Loop>k__BackingField: 0
+    <SeamlessLoop>k__BackingField: 0
+    <TransitionTime>k__BackingField: -1
+    <SpatialSetting>k__BackingField: {fileID: 11400000, guid: 51e076fbebb82e34884e47599fe554e4,
+      type: 2}
+    <Priority>k__BackingField: 128
+    <Pitch>k__BackingField: 1.0815
+    <PitchRandomRange>k__BackingField: 0.33900005
+    <VolumeRandomRange>k__BackingField: 0.11199999
+    <RandomFlags>k__BackingField: 1
+    SeamlessTransitionType: 0
+    TransitionTempo:
+      BPM: 0
+      Beats: 0
+    SnapToFullVolume: 0
   <AssetName>k__BackingField: GameAudio
   _assetGUID: e9094cf965d8b454aa0fd529b4e73de5

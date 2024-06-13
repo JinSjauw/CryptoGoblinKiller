@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using Ami.BroAudio;
 using UnityEngine;
 
 public class EnemyHitBox : MonoBehaviour
@@ -12,6 +13,8 @@ public class EnemyHitBox : MonoBehaviour
     [SerializeField] private float _targetHeadScale;
     private SpringUtils.SpringMotionParams _springMotionParams;
 
+    private SoundSource _soundSource;
+    
     private bool _animateHead;
     private float _headScale;
     private float _headScaleDelta;
@@ -22,6 +25,7 @@ public class EnemyHitBox : MonoBehaviour
     {
         _headScale = 1;
         _springMotionParams = new SpringUtils.SpringMotionParams();
+        _soundSource = GetComponent<SoundSource>();
     }
     
     private void Update()
@@ -61,6 +65,7 @@ public class EnemyHitBox : MonoBehaviour
     
     public void Hit(float damage)
     {
+        _soundSource.Play();
         onHitEvent?.Invoke(null, new EnemyHit(damage, _type, this));
     }
 
