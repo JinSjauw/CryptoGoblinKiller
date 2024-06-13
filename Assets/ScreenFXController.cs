@@ -50,7 +50,7 @@ public class ScreenFXController : MonoBehaviour
         {
             //Lerp to 0!
             _hitFXAlpha = Mathf.MoveTowards(_hitFXAlpha, 0, Time.deltaTime / _hitFXTimeToDecay);
-            _hitFXMaterial.SetFloat(_vignetteIntensity, Mathf.Lerp(0, _hitFXMaxValue, _hitFXDecayCurve.Evaluate(_hitFXAlpha)));
+            _hitFXMaterial.SetFloat(_vignetteIntensity, Mathf.Lerp(0, _hitFXMaxValue + .2f, _hitFXDecayCurve.Evaluate(_hitFXAlpha)));
         }
 
         if (_stopRechargeFX)
@@ -74,7 +74,8 @@ public class ScreenFXController : MonoBehaviour
 
     private void ShowHitFX(float health)
     {
-        _hitFXAlpha = 1;
+        _hitFXAlpha += 1;
+        _hitFXAlpha = Mathf.Clamp(_hitFXAlpha, 0, 3);
         _hitFXMaterial.SetFloat(_vignetteIntensity, _hitFXMaxValue);
     }
 
