@@ -8,6 +8,9 @@ public class CameraController : MonoBehaviour
     [SerializeField] private Transform _cameraHolder;
     [SerializeField] private RectTransform _crossHair;
     [SerializeField] private Transform _lookDirection2D;
+
+    [SerializeField] private Camera _playerCamera;
+    [SerializeField] private Camera _uiCamera;
     
     [Header("Camera FOV")] 
     [SerializeField] private float _normalFOV;
@@ -22,7 +25,6 @@ public class CameraController : MonoBehaviour
     [SerializeField] private float _tiltSpringFrequency;
     [SerializeField] private float _tiltDampRatio;*/
     
-    private Camera _playerCamera;
     
     //Camera FOV
     private SpringUtils.SpringMotionParams _springParamsFOV;
@@ -53,7 +55,7 @@ public class CameraController : MonoBehaviour
     
     private void Awake()
     {
-        _playerCamera = GetComponentInChildren<Camera>();
+        //_playerCamera = GetComponentInChildren<Camera>();
         _springParamsFOV = new SpringUtils.SpringMotionParams();
         _springParamsTilt = new SpringUtils.SpringMotionParams();
 
@@ -62,6 +64,8 @@ public class CameraController : MonoBehaviour
 
     private void Update()
     {
+        CrossHairRay();
+        
         HandleFOVChange();
         HandleTiltChange();
     }

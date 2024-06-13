@@ -99,7 +99,7 @@ Material:
     - _DstBlendAlpha: 0
     - _Enabled: 0
     - _EnvironmentReflections: 1
-    - _FullScreenIntensity: 0.705
+    - _FullScreenIntensity: 0.6
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
